@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleShop.WebApi", "SimpleShop\SimpleShop.WebApi.csproj", "{CEFAB494-FCEA-4E3B-A1F4-2217EB8F9DFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StroyMir.Core", "StroyMirCore\StroyMir.Core.csproj", "{FD6B0544-C00C-4EDC-B454-0ED147431C36}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CEFAB494-FCEA-4E3B-A1F4-2217EB8F9DFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEFAB494-FCEA-4E3B-A1F4-2217EB8F9DFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEFAB494-FCEA-4E3B-A1F4-2217EB8F9DFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEFAB494-FCEA-4E3B-A1F4-2217EB8F9DFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD6B0544-C00C-4EDC-B454-0ED147431C36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD6B0544-C00C-4EDC-B454-0ED147431C36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD6B0544-C00C-4EDC-B454-0ED147431C36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD6B0544-C00C-4EDC-B454-0ED147431C36}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A11BAA3C-B6E2-4076-B8CF-CF941BD88B11}
+	EndGlobalSection
+EndGlobal

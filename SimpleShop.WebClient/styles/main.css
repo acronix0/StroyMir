@@ -1,0 +1,48 @@
+ul#menu li {
+  display: inline;
+  color: blue;
+}
+
+.block > p {
+  color: blue;
+}
+.arial {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.fontsize30 {
+  font-size: 30px;
+}
+.italic {
+  font-style: italic;
+}
+.font700 {
+  font-weight: 700;
+}
+.colorred {
+  color: red;
+}
+.textright {
+  text-align: justify;
+}
+.decoration {
+  text-decoration: underline;
+}
+.shadow {
+  text-shadow: 1px 1px 1px #888888;
+}
+.transform {
+  text-transform: uppercase;
+}
+.ident {
+  text-indent: 50px;
+}
+.lspase {
+  letter-spacing: 5px;
+}
+.whitespace {
+  white-space: nowrap;
+}
+.lineheigh{
+    line-height: 100px;
+    
+}
