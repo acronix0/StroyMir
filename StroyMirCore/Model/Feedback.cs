@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StroyMir.Core.Model
+namespace SimpleShop.Core.Model
 {
     public class Feedback : BaseEntity
     {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-namespace StroyMir.Core.Model   
+namespace SimpleShop.Core.Model   
 {
     public class ApplicationUser : IdentityUser
     {
