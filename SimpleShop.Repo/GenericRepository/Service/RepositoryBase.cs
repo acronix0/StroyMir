@@ -19,7 +19,7 @@ namespace SimpleShop.Repo.GenericRepository.Service
         public async Task<IQueryable<T>> FindAllAsync(bool trackChanges) =>
             !trackChanges ? await Task.Run(() => RepositoryContext.Set<T>().AsNoTracking()) : await Task.Run(() => RepositoryContext.Set<T>());
 
-        public async Task<IQueryable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression, bool trackChanges) =>
+        public virtual async Task<IQueryable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression, bool trackChanges) =>
             !trackChanges ? await Task.Run(() => RepositoryContext.Set<T>().Where(expression).AsNoTracking()) : await Task.Run(() => RepositoryContext.Set<T>().Where(expression));
         public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges) =>
             !trackChanges ? RepositoryContext.Set<T>().Where(expression).AsNoTracking() : RepositoryContext.Set<T>().Where(expression);

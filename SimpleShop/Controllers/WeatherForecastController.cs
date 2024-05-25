@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using SimpleShop.Core.Model;
+using SimpleShop.Service.Interfaces;
+using SimpleShop.Service.Services;
 
 namespace SimpleShop.Controllers
 {
@@ -12,15 +15,22 @@ namespace SimpleShop.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        private RepositoryManager _repositoryManager;
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, RepositoryManager repositoryManager)
         {
+            _repositoryManager = repositoryManager;
             _logger = logger;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<IEnumerable<WeatherForecast>> GetAsync()
         {
+            var x = new Category() { Description = "123", Name = "123" };
+            _repositoryManager.CategoryRepository.AddCategory(x);
+            var xx =  _repositoryManager.SaveAsync();
+            // toddo long operation
+            await xx;
+             //var xx = _repositoryManager.OrderRepository.FindByCondition(o => (o as Order).TotalPrice > 0, false); 
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
