@@ -12,10 +12,10 @@ internal class Program
         // Add services to the container.
         builder.Services.ConfigureSqlContext(builder.Configuration);
         builder.Services.AddScoped<RepositoryManager>();
-        builder.Services.AddScoped<OrderRepository>();
-        
+        builder.Services.ConfigureLoggerService();
+        builder.Services.ConfigureMapping();
 
-        //builder.Services.ConfigureRepositoryManager();
+        builder.Services.ConfigureRepositoryManager();
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();

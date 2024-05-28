@@ -9,13 +9,11 @@ namespace SimpleShop.Service.Interfaces
 {
     public interface ICategoryRepository
     {
-        Task AddCategory(Category category);
+        Task<IEnumerable<Category>> GetCategories();
+        Task<Category> GetCategory(int id);
 
-        Task<IEnumerable<Category>> GetCategiries();
         Task UpdateCategory(Category category);
         Task DeleteCatigory(Category category);
-        
-
-
+        Task AddCategory(Category category);
     }
 }

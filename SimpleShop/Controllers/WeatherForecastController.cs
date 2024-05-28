@@ -1,32 +1,35 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SimpleShop.Core.Model;
 using SimpleShop.Service.Interfaces;
 using SimpleShop.Service.Services;
+using SimpleShop.WebApi.Controllers;
 
 namespace SimpleShop.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class WeatherForecastController : BaseApiController
     {
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
-        private RepositoryManager _repositoryManager;
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, RepositoryManager repositoryManager)
+        private readonly ILoggerManager _logger;
+        private IMapper _mapper;
+
+        public WeatherForecastController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper) : base(repository, logger, mapper)
         {
-            _repositoryManager = repositoryManager;
-            _logger = logger;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
         public async Task<IEnumerable<WeatherForecast>> GetAsync()
         {
-            var x = new Category() { Description = "123", Name = "123" };
-            _repositoryManager.CategoryRepository.AddCategory(x);
+            var categories =  await _repositoryManager.CategoryRepository.GetCategories();
+            var x = new Category() { Description = "222", Name = "222" };
+            await _repositoryManager.CategoryRepository.AddCategory(x);
+        
             var xx =  _repositoryManager.SaveAsync();
             // toddo long operation
             await xx;

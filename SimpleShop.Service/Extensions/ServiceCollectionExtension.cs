@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SimpleShop.Core.Mappings;
 using SimpleShop.Repo.Data;
 using SimpleShop.Service.Interfaces;
 using SimpleShop.Service.Services;
@@ -25,6 +28,14 @@ namespace SimpleShop.Service.Extensions
 
         public static void ConfigureRepositoryManager(this IServiceCollection services)
             => services.AddScoped<IRepositoryManager, RepositoryManager>();
-
+        public static void ConfigureMapping(this IServiceCollection services)
+        {
+            services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
+            var mapperConfig = new MapperConfiguration(map =>
+            {
+                map.AddProfile<UserMappingProfile>();
+            });
+            services.AddSingleton(mapperConfig.CreateMapper());
+        }
     }
 }

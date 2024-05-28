@@ -38,10 +38,7 @@ namespace SimpleShop.Service.Services
         public Task DeleteEntity(BaseEntity baseEntity)=>
             RemoveAsync(baseEntity);
 
-        //public override Task<IQueryable<T>> FindByConditionAsync(Expression<Func<BaseEntity, bool>> expression, bool trackChanges)
-        //{
-        //    return base.FindByConditionAsync(expression, trackChanges);
-        //}
+
     }
 }
 #pragma warning restore CS8603 // Возможно, возврат ссылки, допускающей значение NULL.

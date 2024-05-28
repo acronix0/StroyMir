@@ -16,7 +16,7 @@ namespace SimpleShop.Service.Services
     {
         private RepositoryContext _repositoryContext;
         //private IEntityRepository _baseEntityRepository;
-        private OrderRepository _OrderRepository;
+       
         private ICategoryRepository _CategoryRepository;
 
         //private UserManager<ApplicationUser> _userManager;
@@ -32,15 +32,7 @@ namespace SimpleShop.Service.Services
             //_configuration = configuration;
         }
 
-       	public OrderRepository OrderRepository
-        {
-			get
-			{
-				if (_OrderRepository is null)
-                    _OrderRepository = new OrderRepository(_repositoryContext);
-				return _OrderRepository;
-			}
-		}
+
         public ICategoryRepository CategoryRepository
         {
             get
