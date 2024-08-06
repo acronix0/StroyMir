@@ -17,6 +17,7 @@ namespace SimpleShop.Core.Model
     public class Order : BaseEntity
     {
         public ApplicationUser User{ get; set; }
+        public List<Product> Products{ get; set; }
         public decimal TotalPrice{ get; set; }
         public DateTime OrderDate{ get; set; }
         public OrderState OrderState { get; set; }

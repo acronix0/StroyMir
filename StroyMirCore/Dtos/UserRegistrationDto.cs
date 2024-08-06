@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SimpleShop.Core.Dtos
 {
-    internal class UserRegistrationDto
+    public class UserRegistrationDto
     {
         [Required(ErrorMessage = "Email is required")]
         public string? Email { get; init; }
