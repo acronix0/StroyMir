@@ -15,6 +15,12 @@ namespace SimpleShop.Core.Dtos
         [Required(ErrorMessage = "Password is required")]
         public string? Password { get; init; }
 
+        [Required(ErrorMessage = "Phone is required")]
+        public string? Phone { get; init; }
+
+        [Required(ErrorMessage = "Name is required")]
+        public string? Name { get; init; }
+
         [Required(ErrorMessage = "Roles is required")]
         public string[]? Roles { get; init; }
     }
