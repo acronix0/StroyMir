@@ -19,7 +19,8 @@ namespace SimpleShop.Service.Services
 
         public async Task AddCategory(Category category) =>
             await CreateAsync(category);
-
+        public async Task AddRangeCategory(IEnumerable<Category> categories)=>
+            await CreateRangeAsync(categories);
         public async Task DeleteCatigory(Category category) =>
             await RemoveAsync(category);
 
@@ -31,7 +32,8 @@ namespace SimpleShop.Service.Services
 
         public async Task UpdateCategory(Category category)=>
             await UpdateAsync(category);
-
+        public async Task UpdateRangeCategory( IEnumerable<Category> categories) =>
+            await UpdateRangeAsync(categories);
 
     }
 }

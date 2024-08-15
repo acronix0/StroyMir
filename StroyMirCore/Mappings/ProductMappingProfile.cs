@@ -15,7 +15,8 @@ namespace SimpleShop.Core.Mappings
         {
             CreateMap<Product, ProductDto>()
                 //dest = result object, opt = mapping obj, src = request obj 
-                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category.Id.ToString()));
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category.Id.ToString()))
+                .ForMember(dest=> dest.Id, opt=> opt.MapFrom(src => src.Article ));
         }
     }
 }

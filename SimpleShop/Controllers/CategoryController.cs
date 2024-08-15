@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SimpleShop.Core.Dtos;
 using SimpleShop.Core.Model;
 using SimpleShop.Service.Interfaces;
 using System.Collections;
@@ -29,8 +30,8 @@ namespace SimpleShop.WebApi.Controllers
 
 
 
-            var catigories = await _repositoryManager.CategoryRepository.GetCategories();
-            return Ok( catigories);
+            var categories = await _repositoryManager.CategoryRepository.GetCategories();
+            return Ok( _mapper.Map<List<CategoryDto>>(categories.ToList()));
            
         }
     }

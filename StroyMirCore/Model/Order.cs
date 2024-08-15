@@ -6,20 +6,23 @@ using System.Threading.Tasks;
 
 namespace SimpleShop.Core.Model
 {
-    public enum OrderState
+   
+    public enum DeliveryType
     {
-        Unpaid,
-        InDelivered,
-        Delivered,
-        Сancelled
-
+        Pickup,     
+        Delivery   
     }
     public class Order : BaseEntity
     {
-        public ApplicationUser User{ get; set; }
-        public List<Product> Products{ get; set; }
+        public ApplicationUser User { get; set; }
+        public List<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
         public decimal TotalPrice{ get; set; }
         public DateTime OrderDate{ get; set; }
-        public OrderState OrderState { get; set; }
+        public DeliveryType DeliveryType { get; set; }
+        public string RecipientName { get; set; }
+        public string RecipientPhone { get; set; }
+        public string RecipientEmail { get; set; }
+        public string Address { get; set; }
+        public string Comment { get; set; }
     }
 }

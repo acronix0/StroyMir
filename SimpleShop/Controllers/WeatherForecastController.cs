@@ -23,25 +23,25 @@ namespace SimpleShop.Controllers
         {
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public async Task<IEnumerable<WeatherForecast>> GetAsync()
-        {
-            var categories =  await _repositoryManager.CategoryRepository.GetCategories();
-            var x = new Category() { Description = "222", Name = "222" };
-            await _repositoryManager.CategoryRepository.AddCategory(x);
-        
-            var xx =  _repositoryManager.SaveAsync();
-            // toddo long operation
-            await xx;
-             //var xx = _repositoryManager.OrderRepository.FindByCondition(o => (o as Order).TotalPrice > 0, false); 
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
-        }
+        //[HttpGet(Name = "GetWeatherForecast")]
+        //public async Task<IEnumerable<WeatherForecast>> GetAsync()
+        //{
+        //    var categories = await _repositoryManager.CategoryRepository.GetCategories();
+        //    var x = new Category() { Description = "222", Name = "222" };
+        //    await _repositoryManager.CategoryRepository.AddCategory(x);
+
+        //    var xx = _repositoryManager.SaveAsync();
+        //    // toddo long operation
+        //    await xx;
+        //    //var xx = _repositoryManager.OrderRepository.FindByCondition(o => (o as Order).TotalPrice > 0, false); 
+        //    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        //    {
+        //        Date = DateTime.Now.AddDays(index),
+        //        TemperatureC = Random.Shared.Next(-20, 55),
+        //        Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+        //    })
+        //    .ToArray();
+        //}
         [HttpPost]
         public async Task<ActionResult<bool>> Post([FromForm] string login, [FromForm] string password)
         {

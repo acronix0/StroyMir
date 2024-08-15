@@ -15,5 +15,7 @@ namespace SimpleShop.Service.Interfaces
         Task UpdateCategory(Category category);
         Task DeleteCatigory(Category category);
         Task AddCategory(Category category);
+        Task AddRangeCategory(IEnumerable<Category> categories);
+        Task UpdateRangeCategory(IEnumerable<Category> categories);
     }
 }

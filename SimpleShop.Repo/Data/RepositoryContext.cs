@@ -28,6 +28,8 @@ namespace SimpleShop.Repo.Data
         public DbSet<News> News { get; set; }
         public DbSet<Feedback> Feedbacks{ get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<Basket> Baskets { get; set; }
+        public DbSet<BasketProduct> BasketProducts { get; set; }
+        public DbSet<OrderProduct> OrderProducts { get; set; }
     }
 }

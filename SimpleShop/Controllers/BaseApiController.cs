@@ -6,7 +6,7 @@ using SimpleShop.Service.Services;
 
 namespace SimpleShop.WebApi.Controllers
 {
-    
+    [Route("api/[controller]")]
     public class BaseApiController : ControllerBase
     {
         protected readonly IRepositoryManager _repositoryManager;
