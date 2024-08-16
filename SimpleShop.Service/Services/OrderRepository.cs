@@ -1,4 +1,5 @@
-﻿using SimpleShop.Core.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using SimpleShop.Core.Model;
 using SimpleShop.Repo.Data;
 using SimpleShop.Repo.GenericRepository.Service;
 using SimpleShop.Service.Interfaces;
@@ -26,9 +27,13 @@ namespace SimpleShop.Service.Services
             await RemoveAsync(order);
         }
 
-        public Task<Order> GetOrderById(int id)
+        public async Task<IEnumerable<Order>> GetUserOrders(string userId)
         {
-            throw new NotImplementedException();
+            var query = await FindByConditionAsyncWithIncludeCollection(
+                o => o.User.Id == userId,
+                op => op.OrderProducts,
+                op => op.Product).Result.ToListAsync() ;
+            return  query;
         }
 
         public Task<IEnumerable<Order>> GetOrders()
@@ -39,6 +44,15 @@ namespace SimpleShop.Service.Services
         public Task UpdateOrder(Order order)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Order> GetOrder(int id)
+        {
+            var query = await FindByConditionAsyncWithIncludeCollection(
+              o => o.Id == id,
+              op => op.OrderProducts,
+              op => op.Product).Result.FirstOrDefaultAsync();
+            return query;
         }
     }
 }

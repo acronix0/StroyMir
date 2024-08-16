@@ -13,7 +13,8 @@ namespace SimpleShop.Service.Interfaces
         Task<IEnumerable<Order>> GetOrders();
         Task AddOrder(Order order);
         Task DeleteOrder(Order order);
-        Task<Order> GetOrderById(int id);
+        Task<Order> GetOrder(int id);
+        Task<IEnumerable<Order>> GetUserOrders(string userId);
         Task UpdateOrder(Order order);
 
     }

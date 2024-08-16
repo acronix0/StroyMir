@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace SimpleShop.Core.Dtos
 {
-    public class ProductFilterDto
+    public class CatalogFilterDto
     {
-       
-        public string SearchText { get; set; }
+        public int CategoryId { get; set; }
+        public int Skip { get; set; }
         public int Take { get; set; }
     }
-   
 }

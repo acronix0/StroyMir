@@ -18,7 +18,7 @@ namespace SimpleShop.Core.Model
         public List<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
         public decimal TotalPrice{ get; set; }
         public DateTime OrderDate{ get; set; }
-        public DeliveryType DeliveryType { get; set; }
+        public string DeliveryType { get; set; }
         public string RecipientName { get; set; }
         public string RecipientPhone { get; set; }
         public string RecipientEmail { get; set; }

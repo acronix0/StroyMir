@@ -11,9 +11,12 @@ namespace SimpleShop.Service.Interfaces
     public interface IProductRepository
     {
         Task<Product> GetProduct(string article);
+        Task<Product> GetProduct(int id);
         Task<IEnumerable<Product>> GetProducts();
-        Task<IEnumerable<Product>> GetProducts(ProductFilterDto productFilterDto, bool trackChanges);
-        IQueryable<Product> ApplyFilter(IQueryable<Product> query, ProductFilterDto filter, bool trackChanges);
+        Task<IEnumerable<Product>> GetProducts(ProductFilterDto filter, bool trackChanges);
+        Task<IEnumerable<Product>> GetProducts(CatalogFilterDto filter, bool trackChanges);
+        IQueryable<Product> ApplyFilter(IQueryable<Product> query, ProductFilterDto filter);
+        IQueryable<Product> ApplyFilter(IQueryable<Product> query, CatalogFilterDto filter);
         Task AddProduct(Product product);
         Task AddRangeProduct(IEnumerable<Product> product);
         Task UpdateProduct(Product product);

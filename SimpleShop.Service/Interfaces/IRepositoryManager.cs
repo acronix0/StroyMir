@@ -14,6 +14,7 @@ namespace SimpleShop.Service.Interfaces
         IProductRepository ProductRepository { get; }
         IBasketRepository BasketRepository { get; }
         IBasketProductRepository BasketProductRepository { get; }
+        IOrderRepository OrderRepository { get; }
         IUserAuthenticationRepository UserAuthentication {  get; }
         Task SaveAsync();
     }

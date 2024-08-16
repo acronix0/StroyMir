@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NLog.Filters;
 using SimpleShop.Core.Dtos;
 using SimpleShop.Core.Model;
 using SimpleShop.Repo.Data;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace SimpleShop.Service.Services
 {
@@ -17,45 +19,50 @@ namespace SimpleShop.Service.Services
         public ProductRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
         }
+       
+        public async Task<IEnumerable<Product>> GetProducts(CatalogFilterDto filter, bool trackChanges)
+        {
+            var query = await FindAllAsync(trackChanges);
+            query = ApplyFilter(query, filter);
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetProducts(ProductFilterDto productFilterDto, bool trackChanges)
+        {
+            var query = await FindAllAsync(trackChanges);
+            query = ApplyFilter(query, productFilterDto);
+            return await query.ToListAsync();
+        }
+
+        public IQueryable<Product> ApplyFilter(IQueryable<Product> query, CatalogFilterDto filter)
+        {
+            query = query.Include(p => p.Category).Where(product => product.Category.Id == filter.CategoryId).Skip(filter.Skip).Take(filter.Take);
+            return query;
+        }
+
+        public IQueryable<Product> ApplyFilter(IQueryable<Product> query, ProductFilterDto filter)
+        {
+            query = query.Include(p => p.Category).Where(p => p.Name.Contains(filter.SearchText)).Take(filter.Take);
+            return query;
+        }
         public async Task<Product> GetProduct(string productArticle)=>
             await FindByConditionAsync(p => p.Article == productArticle).Result.SingleAsync();
         public async Task AddProduct(Product product)=>
             await CreateAsync(product);
         public async Task AddRangeProduct(IEnumerable<Product> products) =>
            await CreateRangeAsync(products);
-        public IQueryable<Product> ApplyFilter(IQueryable<Product> query, ProductFilterDto filter, bool trackChanges)
-        {
-            if (filter == null && filter.SearchText == null)
-                return query;
-            switch (filter.Property)
-            {
-                case ProductsPropertySearch.Name:
-                    query = query.Where(product => product.Name.Contains(filter.SearchText));
-                    break;
-                case ProductsPropertySearch.Category:
-                    query = query.Where(product => product.Category.Name.Contains(filter.SearchText));
-                    break;
-            }
-            return query;
-        }
-
         public async Task DeleteProduct(Product product)=>
             await RemoveAsync(product);
-
-        public async Task<IEnumerable<Product>> GetProducts()=>
-            await FindAllAsync(false);
-
-
-        public async Task<IEnumerable<Product>> GetProducts(ProductFilterDto productFilterDto, bool trackChanges)
-        {
-            var query = await FindAllAsync(false);
-            query = ApplyFilter(query, productFilterDto, false);
-            return await query.ToListAsync();
-        }
-
+      
         public Task UpdateProduct(Product product)=>
             UpdateAsync(product);
         public Task UpdateRangeProduct(IEnumerable<Product> products)=>
             UpdateRangeAsync(products);
+
+        public async Task<IEnumerable<Product>> GetProducts()=>
+            await FindAllAsync(false);
+
+        public async Task<Product> GetProduct(int id)=>
+            await FindByConditionAsync(p => p.Id == id).Result.SingleAsync();
     }
 }

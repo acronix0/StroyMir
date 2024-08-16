@@ -18,6 +18,7 @@ namespace SimpleShop.Service.Services
         private ICategoryRepository _CategoryRepository;
         private IProductRepository _ProductRepository;
         private IBasketRepository _BasketRepository;
+        private IOrderRepository _OrderRepository;
         private IUserAuthenticationRepository _userAuthenticationRepository;
         private IBasketProductRepository _BasketProductRepository;
 
@@ -36,7 +37,15 @@ namespace SimpleShop.Service.Services
             _configuration = configuration;
         }
 
-        public IBasketProductRepository BasketProductRepository
+        public IOrderRepository OrderRepository
+        {
+            get
+            {
+                if (_OrderRepository is null)
+                    _OrderRepository = new OrderRepository(_repositoryContext);
+                return _OrderRepository;
+            }
+        }  public IBasketProductRepository BasketProductRepository
         {
             get
             {

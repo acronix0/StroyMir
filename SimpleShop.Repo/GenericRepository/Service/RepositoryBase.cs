@@ -37,15 +37,14 @@ namespace SimpleShop.Repo.GenericRepository.Service
         }
         public virtual async Task<IQueryable<T>> FindByConditionAsyncWithInclude<TIncludeProperty>(
             Expression<Func<T, bool>> expression,
-            Expression<Func<T, IEnumerable<TIncludeProperty>>> IncludeExpression,
+            Expression<Func<T, TIncludeProperty>> IncludeExpression,
             bool trackChanges = false)
         {
             var query = await Task.Run(() => RepositoryContext.Set<T>()
                                                     .Include(IncludeExpression)
                                                     .Where(expression));
             return trackChanges ? query : query.AsNoTracking();
-        } 
-            
+        }
         public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false) =>
             !trackChanges ? RepositoryContext.Set<T>().Where(expression).AsNoTracking() : RepositoryContext.Set<T>().Where(expression);
 

@@ -140,7 +140,9 @@ namespace SimpleShop.Service.Extensions
             {
                 map.AddProfile<UserMappingProfile>();
                 map.AddProfile<CategoryMappingProfile>();
+                map.AddProfile<OrderProductMappingProfile>();
                 map.AddProfile<ProductMappingProfile>();
+                map.AddProfile<OrderMappingProfile>();
             });
             services.AddSingleton(mapperConfig.CreateMapper());
         }
