@@ -23,22 +23,39 @@ namespace SimpleShop.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUser()
         {
-            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            var user = await _userManager.FindByEmailAsync(userEmail);
-            var dto = _mapper.Map<UserRegistrationDto>(user);
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            var role = await _userManager.GetRolesAsync(user);
+            
+            var dto = new UserRegistrationDto()
+            {
+                Email = user.Email,
+                Name = user.DisplayName,
+                Password="",
+                Phone=user.PhoneNumber,
+                Role = role.First()
+            };
+
             return Ok(dto);
         }
-        [HttpPost("ChangePassword")]
-        public async Task<IActionResult> ChangePassword(string userId, string oldPassword, string newPassword)
+
+       
+        
+
+        [HttpPost("change-info")]
+        public async Task<IActionResult> ChangeInfo([FromBody] UserRegistrationDto userDto)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            if (user == null || userDto == null)
                 return BadRequest();
 
-            var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
-            if (result.Succeeded)
-                return Ok();
-            return BadRequest(new { Status = "Error", Message = "Change password failed", errors = result.Errors });
+            var result = await _repositoryManager.UserAuthentication.ChangeInfo(user, userDto);
+            if (result.EmailChangeSucceeded && result.PhoneChangeSucceeded)
+                return Ok(new { Token = result.Token });
+
+            var errors = string.Join("; ", result.Errors);
+            return BadRequest(new { Errors = errors });
         }
+
+        
     }
 }

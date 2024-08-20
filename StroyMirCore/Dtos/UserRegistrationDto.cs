@@ -20,9 +20,8 @@ namespace SimpleShop.Core.Dtos
 
         [Required(ErrorMessage = "Name is required")]
         public string? Name { get; init; }
-        
 
-        [Required(ErrorMessage = "Roles is required")]
+
         public string Role { get; init; }
     }
 }

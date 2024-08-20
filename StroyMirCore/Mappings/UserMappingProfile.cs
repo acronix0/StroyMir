@@ -13,8 +13,8 @@ namespace SimpleShop.Core.Mappings
         public UserMappingProfile()
         {
             CreateMap<UserRegistrationDto, ApplicationUser>()
-                .ForMember(dist=> dist.UserName, opt=>opt.MapFrom(src=>src.Name))
-                .ForMember(dist=> dist.PhoneNumber, opt=>opt.MapFrom(src=>src.Phone));
+                .ForMember(dist => dist.DisplayName, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dist => dist.PhoneNumber, opt => opt.MapFrom(src => src.Phone)).ReverseMap();
         }
     }
 }

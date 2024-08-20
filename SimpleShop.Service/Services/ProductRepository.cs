@@ -36,7 +36,26 @@ namespace SimpleShop.Service.Services
 
         public IQueryable<Product> ApplyFilter(IQueryable<Product> query, CatalogFilterDto filter)
         {
-            query = query.Include(p => p.Category).Where(product => product.Category.Id == filter.CategoryId).Skip(filter.Skip).Take(filter.Take);
+            query = query.Include(p => p.Category).Where(product => product.Category.Id == filter.CategoryId && product.Name.Contains(filter.SearchText));
+            switch (filter.SortedType)
+            {
+                case SortedType.name:
+                    query = query.OrderBy(p => p.Name);
+                    break;
+                case SortedType.priceUp:
+                    query = query.OrderBy(p => p.Price);
+                    break;
+                case SortedType.priceDown:
+                    query = query.OrderByDescending(p => p.Price);
+                    break;
+                case SortedType.count:
+                    query = query.OrderBy(p => p.Count);
+                    break;
+                default:
+                    break;
+            }
+            
+            query = query.Skip(filter.Skip).Take(filter.Take);
             return query;
         }
 

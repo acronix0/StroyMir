@@ -24,6 +24,12 @@ namespace SimpleShop.WebApi.Controllers
             var products = _mapper.Map<List<ProductDto>>(await _repositoryManager.ProductRepository.GetProducts(filter, false));
             return Ok(products);
         }
+        [HttpGet("search-catalog")]
+        public async Task<IActionResult> SearchCatalog([FromQuery] CatalogFilterDto filter)
+        {
+            var products = _mapper.Map<List<ProductDto>>(await _repositoryManager.ProductRepository.GetProducts(filter, false));
+            return Ok(products);
+        }
         [HttpGet("delete")]
         public async Task<IActionResult> DeleteProduct(string article)
         {

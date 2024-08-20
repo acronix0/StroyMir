@@ -62,7 +62,7 @@ namespace SimpleShop.WebApi.Controllers
 
         [HttpPost("remove-product")]
         [Authorize]
-        public async Task<IActionResult> RemoveProductFromBasket(string productArticle)
+        public async Task<IActionResult> RemoveProductFromBasket([FromBody] string productArticle)
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             if (user == null)
@@ -72,7 +72,7 @@ namespace SimpleShop.WebApi.Controllers
         }
         [HttpPost("change-product-count")]
         [Authorize]
-        public async Task<IActionResult> ChangeProductCount(string productArticle, int count)
+        public async Task<IActionResult> ChangeProductCount([FromBody] string productArticle,  int count)
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             if (user == null)

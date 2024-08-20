@@ -5,6 +5,8 @@ using SimpleShop.Core.Dtos;
 using SimpleShop.Core.Model;
 using SimpleShop.Service.Interfaces;
 using System.Collections;
+using System.Net.Mail;
+using System.Net;
 
 namespace SimpleShop.WebApi.Controllers
 {
@@ -18,21 +20,9 @@ namespace SimpleShop.WebApi.Controllers
         [HttpGet("GetCategories")]
         public async Task<IActionResult> GetCategories()
         {
-            string[] people = { "Tom", "Sam", "Bob" };
-            
-            IEnumerator peopleEnumerator = people.GetEnumerator(); // получаем IEnumerator
-            while (peopleEnumerator.MoveNext())   // пока не будет возвращено false
-            {
-                string item = (string)peopleEnumerator.Current; // получаем элемент на текущей позиции
-                Console.WriteLine(item);
-            }
-            peopleEnumerator.Reset();
-
-
-
             var categories = await _repositoryManager.CategoryRepository.GetCategories();
             return Ok( _mapper.Map<List<CategoryDto>>(categories.ToList()));
-           
         }
+       
     }
 }

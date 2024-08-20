@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using SimpleShop.Core.Dtos;
 using SimpleShop.Core.Model;
 using SimpleShop.Repo.GenericRepository.Service;
@@ -51,9 +53,8 @@ namespace SimpleShop.Service.Services
         public async Task<IdentityResult> AddUserAsync(UserRegistrationDto userRegistration)
         {
             var user = _mapper.Map<ApplicationUser>(userRegistration);
-    
-            if (user.UserName == null)
-                user.UserName = userRegistration.Name;
+            user.DisplayName = userRegistration.Name;
+            user.UserName = userRegistration.Email;
             var result = await _userManager.CreateAsync(user, userRegistration.Password);
             if (result.Succeeded)
             {
@@ -61,7 +62,86 @@ namespace SimpleShop.Service.Services
             }
             return result;
         }
-      
+        public async Task<DetailedOperationResult> ChangeInfo(ApplicationUser user, UserRegistrationDto userRegistrationDto)
+        {
+            _user = user;
+            var result = new DetailedOperationResult();
+            if (userRegistrationDto.Password != "")
+            {
+                var passwordToken =  await _userManager.GeneratePasswordResetTokenAsync(user);
+                var passResult = await _userManager.ResetPasswordAsync(user, passwordToken, userRegistrationDto.Password);
+                if (passResult.Succeeded)
+                {
+                    result.PasswordChangeSucceeded = true;
+                }
+                else
+                {
+                    result.PasswordChangeSucceeded = false;
+                    result.AddErrors(passResult.Errors, "Name Change");
+                }
+            }
+            if (userRegistrationDto.Name != user.DisplayName)
+            {
+                user.DisplayName = userRegistrationDto.Name;
+                var NameResult = await _userManager.UpdateAsync(user);
+                if (NameResult.Succeeded)
+                {
+                    result.NameChangeSucceeded = true;
+                }
+                else
+                {
+                    result.NameChangeSucceeded = false;
+                    result.AddErrors(NameResult.Errors, "Name Change");
+                }
+            }
+            if (user.Email != userRegistrationDto.Email)
+            {
+                var token = await _userManager.GenerateChangeEmailTokenAsync(user, userRegistrationDto.Email);
+                var emailResult = await _userManager.ChangeEmailAsync(user, userRegistrationDto.Email, token);
+                
+                
+                if (emailResult.Succeeded)
+                {
+                    result.EmailChangeSucceeded = true;
+                    await _userManager.SetUserNameAsync(user, userRegistrationDto.Email);
+                }
+                else
+                {
+                    result.EmailChangeSucceeded = false;
+                    result.AddErrors(emailResult.Errors, "Email Change");
+                }
+            }
+            else
+            {
+                result.EmailChangeSucceeded = true; // Никаких изменений не требуется
+            }
+
+            if (user.PhoneNumber != userRegistrationDto.Phone)
+            {
+                var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, userRegistrationDto.Phone);
+                var phoneResult = await _userManager.ChangePhoneNumberAsync(user, userRegistrationDto.Phone, token);
+                if (phoneResult.Succeeded)
+                {
+                    result.PhoneChangeSucceeded = true;
+                }
+                else
+                {
+                    result.PhoneChangeSucceeded = false;
+                    result.AddErrors(phoneResult.Errors, "Phone Change");
+                }
+            }
+            else
+            {
+                result.PhoneChangeSucceeded = true; 
+            }
+
+            if (result.EmailChangeSucceeded && result.PhoneChangeSucceeded)
+            {
+                result.Token = await CreateTokenAsync(); 
+            }
+
+            return result;
+        }
 
         public async Task<bool> ValidateUserAsync(UserLoginDto loginDto)
         {
@@ -104,15 +184,30 @@ namespace SimpleShop.Service.Services
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
             var jwtSettings = _configuration.GetSection("JwtConfig");
+            var x = DateTime.Now.AddYears(Convert.ToInt32(jwtSettings["expiresIn"]));
             var tokenOptions = new JwtSecurityToken
             (
             issuer: jwtSettings["validIssuer"],
             audience: jwtSettings["validAudience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["expiresIn"])),
+            expires: DateTime.Now.AddYears(Convert.ToInt32(jwtSettings["expiresIn"])),
             signingCredentials: signingCredentials
             );
             return tokenOptions;
+        }
+    }
+    public class DetailedOperationResult
+    {
+        public bool EmailChangeSucceeded { get; set; }
+        public bool PhoneChangeSucceeded { get; set; }
+        public bool NameChangeSucceeded { get; set; }
+        public bool PasswordChangeSucceeded { get; set; }
+        public List<string> Errors { get; set; } = new List<string>();
+        public string Token { get; set; }
+
+        public void AddErrors(IEnumerable<IdentityError> errors, string source)
+        {
+            Errors.AddRange(errors.Select(e => $"{source}: {e.Description}"));
         }
     }
 }
