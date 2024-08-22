@@ -46,6 +46,7 @@ namespace SimpleShop.Service.Extensions
                 o.Password.RequireUppercase = false;
                 o.Password.RequireNonAlphanumeric = false;
                 o.User.RequireUniqueEmail = true;
+                
             })
             .AddEntityFrameworkStores<RepositoryContext>()
             .AddDefaultTokenProviders();

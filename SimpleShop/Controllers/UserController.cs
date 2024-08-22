@@ -25,16 +25,8 @@ namespace SimpleShop.WebApi.Controllers
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var role = await _userManager.GetRolesAsync(user);
-            
-            var dto = new UserRegistrationDto()
-            {
-                Email = user.Email,
-                Name = user.DisplayName,
-                Password="",
-                Phone=user.PhoneNumber,
-                Role = role.First()
-            };
-
+            var dto = _mapper.Map<UserRegistrationDto>(user);
+            dto.Role = role.First();
             return Ok(dto);
         }
 

@@ -10,18 +10,19 @@ namespace SimpleShop.Core.Dtos
     public class UserRegistrationDto
     {
         [Required(ErrorMessage = "Email is required")]
-        public string? Email { get; init; }
+        public string? Email { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
-        public string? Password { get; init; }
+        public string? Password { get; set; }
 
         [Required(ErrorMessage = "Phone is required")]
-        public string? Phone { get; init; }
+        public string? Phone { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
-        public string? Name { get; init; }
+        public string? Name { get; set; }
 
 
-        public string Role { get; init; }
+        public string Role { get; set; }
+
     }
 }

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SimpleShop.Core.Dtos;
 using SimpleShop.Core.Model;
+using SimpleShop.Repo.Data;
 using SimpleShop.Service.Interfaces;
 using SimpleShop.Service.Services;
 
@@ -34,12 +36,18 @@ namespace SimpleShop.WebApi.Controllers
             var result = await  _repositoryManager.UserAuthentication.AddUserAsync(user);
             if (result.Succeeded)
             {
-                _repositoryManager.UserAuthentication.AddUserRoleAsync(user, user.Role).Wait();
+                _repositoryManager.UserAuthentication.AddUserRoleAsync(user, "Admin").Wait();
                 return Ok(new { Token = await _repositoryManager.UserAuthentication.CreateTokenAsync() });
             }
             var errorMessage = result.Errors.Select(e => e.Description).ToList();
-            return BadRequest( new { status = "error", message = "Registration failed.", errors = errorMessage});
+            return BadRequest( new { status = "error", message = String.Join(", ",errorMessage)});
         }
-
+        [Authorize (Roles =UserRoles.Admin)]
+        [HttpPost("register-admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] UserRegistrationDto user)
+        {
+            user.Role = "Admin";
+            return await Register(user);
+        }
     }
 }
