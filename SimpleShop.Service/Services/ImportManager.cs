@@ -195,7 +195,11 @@ namespace SimpleShop.Service.Services
         }
 
 
+        public async Task ImportImage(IFormFile file)
+        {
 
-     
+        }
+
+
     }
 }

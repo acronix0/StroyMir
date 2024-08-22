@@ -14,9 +14,12 @@ namespace SimpleShop.WebApi.Controllers
     [ApiController]
     public class AuthController : BaseApiController
     {
-        
-        public AuthController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, UserManager<ApplicationUser> userManager) : base(repository, logger, mapper)
+        private MailManager _mailManager;
+        private UserManager<ApplicationUser> _userManager;
+        public AuthController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, UserManager<ApplicationUser> userManager, MailManager mailManager) : base(repository, logger, mapper)
         {
+            _mailManager = mailManager;
+            _userManager = userManager;
         }
 
         [HttpPost("login")]
@@ -48,6 +51,49 @@ namespace SimpleShop.WebApi.Controllers
         {
             user.Role = "Admin";
             return await Register(user);
+        }
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] string Email)
+        {
+            var user = await _userManager.FindByEmailAsync(Email);
+            if (user == null)
+                return BadRequest();
+            var password = GeneratePassword(6);
+            var x = await _repositoryManager.UserAuthentication.ChangePassword(user, password);
+            if (x.Succeeded)
+            {
+                await _mailManager.SendMail("Восстановление учетной записи",
+                    $"Добрый день!\n\n" +
+                    $"На сайте DMTrade был сделан запрос на изменение вашего пароля.\n\n" +
+                    $"Новый пароль: {password}\n\n\n" +
+                    $"С уважением,/nадминистрация DMTrade\nhttps://dm-trade.pro", Email);
+                return Ok();
+            }
+            return BadRequest();
+        }
+        static string GeneratePassword(int length)
+        {
+            const string upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string lowerChars = "abcdefghijklmnopqrstuvwxyz";
+            const string digits = "0123456789";
+            const string specialChars = "!@#$%^&*()-_=+";
+
+            Random random = new Random();
+
+            char[] password = new char[length];
+            password[0] = upperChars[random.Next(upperChars.Length)];
+            password[1] = lowerChars[random.Next(lowerChars.Length)];
+            password[2] = digits[random.Next(digits.Length)];
+            password[3] = specialChars[random.Next(specialChars.Length)];
+
+            string allChars = upperChars + lowerChars + digits + specialChars;
+            for (int i = 4; i < length; i++)
+            {
+                password[i] = allChars[random.Next(allChars.Length)];
+            }
+
+            // Перемешиваем символы для случайного порядка
+            return new string(password.OrderBy(x => random.Next()).ToArray());
         }
     }
 }

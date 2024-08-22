@@ -22,6 +22,7 @@ internal class Program
         builder.Services.ConfigureSqlContext(builder.Configuration);
         builder.Services.AddScoped<BasketManager>();
         builder.Services.AddScoped<RepositoryManager>();
+        builder.Services.AddSingleton<MailManager>();
         builder.Services.ConfigureLoggerService();
         builder.Services.ConfigureMapping();
 

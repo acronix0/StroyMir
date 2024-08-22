@@ -17,6 +17,7 @@ namespace SimpleShop.Service.Interfaces
         Task AddUserRoleAsync(UserRegistrationDto user, string role);
         Task<bool> ValidateUserAsync(UserLoginDto loginDto);
         Task<DetailedOperationResult> ChangeInfo(ApplicationUser user, UserRegistrationDto userRegistrationDto);
+        Task<IdentityResult> ChangePassword(ApplicationUser user, string password);
         Task<string> CreateTokenAsync();
     }
 }

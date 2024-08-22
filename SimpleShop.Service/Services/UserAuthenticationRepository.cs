@@ -68,8 +68,8 @@ namespace SimpleShop.Service.Services
             var result = new DetailedOperationResult();
             if (userRegistrationDto.Password != "")
             {
-                var passwordToken =  await _userManager.GeneratePasswordResetTokenAsync(user);
-                var passResult = await _userManager.ResetPasswordAsync(user, passwordToken, userRegistrationDto.Password);
+                
+                var passResult = await ChangePassword(user, userRegistrationDto.Password);
                 if (passResult.Succeeded)
                 {
                     result.PasswordChangeSucceeded = true;
@@ -142,7 +142,12 @@ namespace SimpleShop.Service.Services
 
             return result;
         }
-
+        public async Task<IdentityResult> ChangePassword(ApplicationUser user, string password)
+        {
+            _user = user;
+            var passwordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            return await _userManager.ResetPasswordAsync(user, passwordToken, password);
+        }
         public async Task<bool> ValidateUserAsync(UserLoginDto loginDto)
         {
             _user = await _userManager.FindByEmailAsync(loginDto.Email);

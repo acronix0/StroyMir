@@ -47,7 +47,7 @@ namespace SimpleShop.WebApi.Controllers
             var errors = string.Join("; ", result.Errors);
             return BadRequest(new { Errors = errors });
         }
-
+        
         
     }
 }
