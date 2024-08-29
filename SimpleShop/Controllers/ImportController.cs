@@ -23,7 +23,7 @@ namespace SimpleShop.WebApi.Controllers
     public class ImportController : BaseApiController
     {
         private ImportManager _importService;
-        private readonly string _imageDirectory = "/app/import_files";
+        
         public ImportController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, ImportManager importService) : base(repository, logger, mapper)
         {
             _importService = importService;
@@ -50,7 +50,7 @@ namespace SimpleShop.WebApi.Controllers
             return Ok();
 
         }
-        
+        private readonly string _imageDirectory = Path.Combine(Directory.GetCurrentDirectory(), "frontend/static/images");
         [HttpPost("import-image")]
         public async Task<IActionResult> ImportProductImage(IFormFile imageFile)
         {
@@ -75,7 +75,7 @@ namespace SimpleShop.WebApi.Controllers
             }
 
             // Путь для сохранения конвертированного файла
-            var webpFilePath = Path.Combine(uploadPath, Path.GetFileNameWithoutExtension(imageFile.FileName) + ".webp");
+            var webpFilePath = Path.Combine(_imageDirectory, Path.GetFileNameWithoutExtension(imageFile.FileName.Replace('.','_')) + ".webp");
 
             // Конвертируем изображение в WebP
             using (var image = Image.Load(originalFilePath))

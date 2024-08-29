@@ -24,7 +24,8 @@ namespace SimpleShop.Service.Services
         {
             var query = await FindAllAsync(trackChanges);
             query = ApplyFilter(query, filter);
-            return await query.ToListAsync();
+            var result = await query.ToListAsync();
+            return result;
         }
 
         public async Task<IEnumerable<Product>> GetProducts(ProductFilterDto productFilterDto, bool trackChanges)
@@ -33,10 +34,24 @@ namespace SimpleShop.Service.Services
             query = ApplyFilter(query, productFilterDto);
             return await query.ToListAsync();
         }
+        public async Task<IEnumerable<Product>> GetProductsById(List<int> ids, bool trackChanges)
+        {
+            var query = await FindAllAsync(trackChanges);
+            query = query.Where(p=>ids.Contains(p.Id));
+            return await query.ToListAsync();
+        }
 
         public IQueryable<Product> ApplyFilter(IQueryable<Product> query, CatalogFilterDto filter)
         {
             query = query.Include(p => p.Category).Where(product => product.Category.Id == filter.CategoryId && product.Name.Contains(filter.SearchText));
+            if (filter.MaxPrice > 0)
+            {
+                query = query.Where(q => q.Price >= filter.MinPrice && q.Price <= filter.MaxPrice); //Between(query, q=>q.Price, filter.MinPrice, filter.MaxPrice);
+            }
+            if (filter.InStock)
+            {
+                query = query.Where(p => p.Count > 0);
+            }
             switch (filter.SortedType)
             {
                 case SortedType.name:
@@ -56,6 +71,7 @@ namespace SimpleShop.Service.Services
             }
             
             query = query.Skip(filter.Skip).Take(filter.Take);
+           
             return query;
         }
 

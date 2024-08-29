@@ -23,11 +23,12 @@ namespace SimpleShop.Core.Model
         }
         private bool ProductEquals(Product other)
         {
-           return Article == other.Article ||
-                  Name == other.Name ||
-                  Image == other.Image ||
-                  Category.Equals(other.Category) ||
-                  Price == other.Price ||
+           if (Category == null || other == null) return false;
+           return Article == other.Article &&
+                  Name == other.Name &&
+                  Image == other.Image &&
+                  Category.Equals(other.Category) &&
+                  Price == other.Price &&
                   Count == other.Count;
         }
     }

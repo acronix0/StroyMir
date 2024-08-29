@@ -15,6 +15,7 @@ namespace SimpleShop.Service.Interfaces
         Task<IEnumerable<Product>> GetProducts();
         Task<IEnumerable<Product>> GetProducts(ProductFilterDto filter, bool trackChanges);
         Task<IEnumerable<Product>> GetProducts(CatalogFilterDto filter, bool trackChanges);
+        Task<IEnumerable<Product>> GetProductsById(List<int> ids, bool trackChanges);
         IQueryable<Product> ApplyFilter(IQueryable<Product> query, ProductFilterDto filter);
         IQueryable<Product> ApplyFilter(IQueryable<Product> query, CatalogFilterDto filter);
         Task AddProduct(Product product);

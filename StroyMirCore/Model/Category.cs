@@ -18,6 +18,7 @@ namespace SimpleShop.Core.Model
         public bool CategoryEquals(Category other)
         {
             return Article == other.Article &&
+             Image == other.Image &&
                 Name == other.Name;
         }
     }

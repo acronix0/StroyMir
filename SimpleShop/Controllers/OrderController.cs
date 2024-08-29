@@ -62,8 +62,13 @@ namespace SimpleShop.WebApi.Controllers
                     Count = item.Count,
                     TotalPrice = item.ProductPrice * item.Count
                 });
+                var product = await _repositoryManager.ProductRepository.GetProduct(item.ProductId);
+                await _repositoryManager.ProductRepository.UpdateProduct(product);
+                product.Count -= item.Count;
             }
+
             await _repositoryManager.OrderRepository.AddOrder(order);
+            
             await _repositoryManager.SaveAsync();
 
 

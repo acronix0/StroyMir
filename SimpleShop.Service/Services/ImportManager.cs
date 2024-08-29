@@ -23,6 +23,24 @@ namespace SimpleShop.Service.Services
         {
             _repository = repositoryManager;
         }
+        static string ChangeFileExtensionToWebp(string filePath)
+        {
+            if(filePath == null || filePath == "" || filePath == string.Empty)
+                return string.Empty;
+            try
+            {
+                string newFilePath = Path.Combine(Path.GetDirectoryName(filePath),
+                                           $"{Path.GetFileNameWithoutExtension(filePath)}.webp");
+                return newFilePath;
+            }
+            catch (Exception e )
+            {
+                var x = e.Message;
+                return string.Empty;
+            }
+            
+            
+        }
         public async Task ImportXml(string xmlData)
         {
             categories.Clear();
@@ -40,43 +58,9 @@ namespace SimpleShop.Service.Services
                 {
                     Article = article,
                     Name = nameWithoutNumber,
-                    Image = article,
+                    Image = "/"+article+"_webp"+".webp",
                 });
             }
-            var importProducts = XmlDoc.GetElementsByTagName("Товар");
-            var i = 0;
-            foreach (XmlNode product in importProducts)
-            {
-                i++;
-                var name = "";
-                var article = "";
-                var image = "";
-                var categoryId = "";
-                try
-                {
-                    name = product.ChildNodes.Cast<XmlNode>().First(n => n.Name == "Наименование").InnerText;
-                    article = product.ChildNodes.Cast<XmlNode>().First(n => n.Name == "Ид").InnerText;
-                    image = product.ChildNodes.Cast<XmlNode>().First(n => n.Name == "Картинка").InnerText;
-                    categoryId = product.ChildNodes.Cast<XmlNode>().First(n => n.Name == "Группы")
-                                            .ChildNodes.Cast<XmlNode>().First(n => n.Name == "Ид").InnerText;
-                }
-                catch (Exception e )
-                {
-
-                    var err = e.Message;
-                }
-                
-                products.Add(new Product()
-                {
-                    Article = article,
-                    Name = name,
-                    Image = image,
-                    Category = categories.First(c=>c.Article == categoryId),
-                    Count=0,
-                });
-            }
-
-
             var getCategories = await _repository.CategoryRepository.GetCategories();
             var oldCategories = getCategories.ToList();
             var newCategories = new List<Category>();
@@ -106,6 +90,59 @@ namespace SimpleShop.Service.Services
 
             var query = await _repository.CategoryRepository.GetCategories();
             categories = query.ToList();
+
+
+
+            var importProducts = XmlDoc.GetElementsByTagName("Товар");
+            var i = 0;
+            foreach (XmlNode product in importProducts)
+            {
+                i++;
+                var name = "";
+                var article = "";
+                var image = "";
+                var categoryId = "";
+                var textImage = "";
+                try
+                {
+                    name = product.ChildNodes.Cast<XmlNode>().FirstOrDefault(n => n.Name == "Наименование").InnerText;
+                    article = product.ChildNodes.Cast<XmlNode>().FirstOrDefault(n => n.Name == "Ид").InnerText;
+                    
+                    categoryId = product.ChildNodes.Cast<XmlNode>().FirstOrDefault(n => n.Name == "Группы")
+                                            .ChildNodes.Cast<XmlNode>().FirstOrDefault(n => n.Name == "Ид").InnerText;
+                    textImage = product.ChildNodes.Cast<XmlNode>().FirstOrDefault(n => n.Name == "Картинка").InnerText;
+                    image = textImage==""?"": textImage.Replace("import_files", "").Replace('.', '_') + ".webp";
+                }
+                catch (Exception e )
+                {
+
+                    var err = e.Message;
+                }
+                try
+                {
+                    if(categoryId != "")
+                    {
+                        products.Add(new Product()
+                        {
+                            Article = article,
+                            Name = name,
+                            Image = image,
+                            Category = categories.First(c => c.Article == categoryId),
+                            Count = 0,
+                        });
+                    }
+                   
+                }
+                catch (Exception e)
+                {
+
+                    var x = e.Message;
+                }
+                
+            }
+
+
+          
         }
 
 

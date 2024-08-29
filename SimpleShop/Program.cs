@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 internal class Program
 {
     private static IConfiguration configuration;
-    private static void Main(string[] args)
+     static void Main(string[] args)
     {
       
        
@@ -25,7 +25,7 @@ internal class Program
         builder.Services.AddSingleton<MailManager>();
         builder.Services.ConfigureLoggerService();
         builder.Services.ConfigureMapping();
-
+        
         builder.Services.ConfigureRepositoryManager();
         builder.Services.AddScoped<ImportManager>();
         
@@ -46,29 +46,24 @@ internal class Program
                 });
         });
         builder.Services.ConfigureJWT(builder.Configuration);
-        
-        //builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder2 =>
-        //{
-        //    builder2.AllowAnyOrigin()
-        //            .AllowAnyMethod()
-        //            .AllowAnyHeader();
-        //}));
 
         var app = builder.Build();
         configuration = app.Configuration;
-        //app.UseCors("CorsPolicy");
-        // Configure the HTTP request pipeline.
-        app.UseSwagger();
-        app.UseSwaggerUI();
+
         if (app.Environment.IsDevelopment())
         {
-            //UseSwagger
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+        else
+        {
+            app.Urls.Add("http://*:7233");
         }
         app.UseCors("AllowAllOrigins");
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
-
+        
         app.MapControllers();
         using (var scope = app.Services.CreateScope())
         {
@@ -85,6 +80,7 @@ internal class Program
 
 
         }
+        
         app.Run();
     }
     private static void CreateRolesIfNotExist(IRepositoryManager repositoryManager)

@@ -58,5 +58,18 @@ namespace SimpleShop.Repo.GenericRepository.Service
             await Task.Run(() => RepositoryContext.Set<T>().UpdateRange(entity));
         public async Task RemoveAsync(T entity) =>
              await Task.Run(() => RepositoryContext.Set<T>().Remove(entity));
+        public static IQueryable<T> Between<TKey>( IQueryable<T> query, Expression<Func<T, TKey>> keySelector, TKey low, TKey high) where TKey : IComparable<TKey>
+        {
+            Expression key = Expression.Invoke(keySelector,
+                 keySelector.Parameters.ToArray());
+            Expression lowerBound = Expression.GreaterThanOrEqual
+                (key, Expression.Constant(low));
+            Expression upperBound = Expression.LessThanOrEqual
+                (key, Expression.Constant(high));
+            Expression and = Expression.AndAlso(lowerBound, upperBound);
+            Expression<Func<T, bool>> lambda =
+                Expression.Lambda<Func<T, bool>>(and, keySelector.Parameters);
+            return query.Where(lambda);
+        }
     }
 }

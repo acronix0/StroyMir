@@ -19,6 +19,7 @@ namespace SimpleShop.Service.Services
 
         public async Task AddOrder(Order order)
         {
+           
            await CreateAsync(order);
         }
 

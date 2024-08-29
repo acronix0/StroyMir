@@ -10,7 +10,7 @@ using SimpleShop.Service.Services;
 
 namespace SimpleShop.WebApi.Controllers
 {
-    [Route("auth")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : BaseApiController
     {
@@ -66,7 +66,7 @@ namespace SimpleShop.WebApi.Controllers
                     $"Добрый день!\n\n" +
                     $"На сайте DMTrade был сделан запрос на изменение вашего пароля.\n\n" +
                     $"Новый пароль: {password}\n\n\n" +
-                    $"С уважением,/nадминистрация DMTrade\nhttps://dm-trade.pro", Email);
+                    $"С уважением,\nадминистрация DMTrade\nhttps://dm-trade.pro", Email);
                 return Ok();
             }
             return BadRequest();
