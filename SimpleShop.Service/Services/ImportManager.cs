@@ -23,24 +23,7 @@ namespace SimpleShop.Service.Services
         {
             _repository = repositoryManager;
         }
-        static string ChangeFileExtensionToWebp(string filePath)
-        {
-            if(filePath == null || filePath == "" || filePath == string.Empty)
-                return string.Empty;
-            try
-            {
-                string newFilePath = Path.Combine(Path.GetDirectoryName(filePath),
-                                           $"{Path.GetFileNameWithoutExtension(filePath)}.webp");
-                return newFilePath;
-            }
-            catch (Exception e )
-            {
-                var x = e.Message;
-                return string.Empty;
-            }
-            
-            
-        }
+
         public async Task ImportXml(string xmlData)
         {
             categories.Clear();
@@ -122,14 +105,18 @@ namespace SimpleShop.Service.Services
                 {
                     if(categoryId != "")
                     {
-                        products.Add(new Product()
+                        var category = categories.FirstOrDefault(c => c.Article == categoryId);
+                        if (category != null)
                         {
-                            Article = article,
-                            Name = name,
-                            Image = image,
-                            Category = categories.First(c => c.Article == categoryId),
-                            Count = 0,
-                        });
+                            products.Add(new Product()
+                            {
+                                Article = article,
+                                Name = name,
+                                Image = image,
+                                CategoryId = category.Id, // Используем отслеживаемую категорию
+                                Count = 0,
+                            });
+                        }
                     }
                    
                 }
@@ -206,21 +193,33 @@ namespace SimpleShop.Service.Services
             var needChangeProducts = new List<Product>();
             foreach (var item in products)
             {
-                var oldProduct = oldProducts.FirstOrDefault(c => c.Article == item.Article);
-                if (oldProduct != null)
+                try
                 {
-                    if (!oldProduct.Equals(item))
+                    var oldProduct = oldProducts.FirstOrDefault(c => c.Article == item.Article);
+                    if (oldProduct != null)
                     {
-                        item.Id = oldProduct.Id;
-                        needChangeProducts.Add(item);
+                        if (!oldProduct.Equals(item))
+                        {
+                            item.Id = oldProduct.Id;
+                            needChangeProducts.Add(item);
+                        }
+                        continue;
                     }
-                    continue;
+                    newProducts.Add(item); 
                 }
-                newProducts.Add(item);
-            }
+                catch (Exception e )
+                {
 
+                    var x = e.Message;
+                }
+                
+            }
+            
+            //var oldProductsIds = getProducts.Select(p => p.Article).ToList();
+            //var needDeleteProducts = products.Where(p => !oldProductsIds.Contains(p.Article)).ToList();
             if (newProducts.Any())
                 await _repository.ProductRepository.AddRangeProduct(newProducts);
+           
 
             if (needChangeProducts.Any())
                 await _repository.ProductRepository.UpdateRangeProduct(needChangeProducts);
@@ -232,10 +231,6 @@ namespace SimpleShop.Service.Services
         }
 
 
-        public async Task ImportImage(IFormFile file)
-        {
-
-        }
 
 
     }

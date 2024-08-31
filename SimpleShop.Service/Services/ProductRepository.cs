@@ -43,7 +43,12 @@ namespace SimpleShop.Service.Services
 
         public IQueryable<Product> ApplyFilter(IQueryable<Product> query, CatalogFilterDto filter)
         {
-            query = query.Include(p => p.Category).Where(product => product.Category.Id == filter.CategoryId && product.Name.Contains(filter.SearchText));
+            query = query.Include(p => p.Category);
+            if (filter.CategoryId != 0)
+            {
+                query = query.Where(product => product.Category.Id == filter.CategoryId );
+            }
+            query = query.Where(product => product.Name.Contains(filter.SearchText));
             if (filter.MaxPrice > 0)
             {
                 query = query.Where(q => q.Price >= filter.MinPrice && q.Price <= filter.MaxPrice); //Between(query, q=>q.Price, filter.MinPrice, filter.MaxPrice);

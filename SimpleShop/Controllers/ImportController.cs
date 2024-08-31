@@ -50,46 +50,55 @@ namespace SimpleShop.WebApi.Controllers
             return Ok();
 
         }
-        private readonly string _imageDirectory = Path.Combine(Directory.GetCurrentDirectory(), "frontend/static/images");
         [HttpPost("import-image")]
         public async Task<IActionResult> ImportProductImage(IFormFile imageFile)
         {
-            if (imageFile == null || imageFile.Length == 0)
+            try
             {
-                return BadRequest("Файл изображения не предоставлен или он пуст.");
-            }
+                if (imageFile == null || imageFile.Length == 0)
+                {
+                    
+                    return BadRequest("Файл изображения не предоставлен или он пуст.");
+                }
 
-            // Путь для сохранения оригинального файла
-            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-            if (!Directory.Exists(uploadPath))
+                // Путь для сохранения оригинального файла
+                var webpDirectory = Path.Combine(Directory.GetCurrentDirectory(), "shared/static/images");
+                if (!Directory.Exists(webpDirectory))
+                {
+                    return BadRequest("no directory");
+                }
+
+                var originalFilePath = Path.Combine(webpDirectory, imageFile.FileName);
+
+                // Сохраняем оригинальный файл на сервере
+                using (var stream = new FileStream(originalFilePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+
+                // Путь для сохранения конвертированного файла
+                var webpFilePath = Path.Combine(webpDirectory, Path.GetFileNameWithoutExtension(imageFile.FileName.Replace('.', '_')) + ".webp");
+
+                // Конвертируем изображение в WebP
+                using (var image = Image.Load(originalFilePath))
+                {
+                    image.Save(webpFilePath, new WebpEncoder());
+                }
+
+                // Удаляем оригинальный файл после конвертации
+                if (System.IO.File.Exists(originalFilePath))
+                {
+                    System.IO.File.Delete(originalFilePath);
+                }
+
+                return Ok();
+            }
+            catch (Exception e)
             {
-                Directory.CreateDirectory(uploadPath);
+
+                return BadRequest("Ошибка: "+ e.Message);
             }
-
-            var originalFilePath = Path.Combine(uploadPath, imageFile.FileName);
-
-            // Сохраняем оригинальный файл на сервере
-            using (var stream = new FileStream(originalFilePath, FileMode.Create))
-            {
-                await imageFile.CopyToAsync(stream);
-            }
-
-            // Путь для сохранения конвертированного файла
-            var webpFilePath = Path.Combine(_imageDirectory, Path.GetFileNameWithoutExtension(imageFile.FileName.Replace('.','_')) + ".webp");
-
-            // Конвертируем изображение в WebP
-            using (var image = Image.Load(originalFilePath))
-            {
-                image.Save(webpFilePath, new WebpEncoder());
-            }
-
-            // Удаляем оригинальный файл после конвертации
-            if (System.IO.File.Exists(originalFilePath))
-            {
-                System.IO.File.Delete(originalFilePath);
-            }
-
-            return Ok();
+            
         }
 
     }
