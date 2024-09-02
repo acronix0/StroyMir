@@ -50,5 +50,25 @@ namespace SimpleShop.WebApi.Controllers
             await _repositoryManager.SaveAsync();
             return Ok();
         }
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPost("add-product")]
+        public async Task<IActionResult> AddProduct([FromBody] ProductDto productDto)
+        {
+            try
+            {
+                productDto.Image = productDto.Image.Replace('.','_')+".webp";
+                var product = _mapper.Map<Product>(productDto);
+                await _repositoryManager.ProductRepository.AddProduct(product);
+
+                await _repositoryManager.SaveAsync();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.Message);
+            }
+          
+        }
     }
 }

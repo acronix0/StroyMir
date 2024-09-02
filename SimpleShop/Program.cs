@@ -49,7 +49,7 @@ internal class Program
 
         var app = builder.Build();
         configuration = app.Configuration;
-
+        
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -59,6 +59,7 @@ internal class Program
         {
             app.Urls.Add("http://*:7233");
         }
+
         app.UseCors("AllowAllOrigins");
         //app.UseHttpsRedirection();
         app.UseAuthentication();
