@@ -41,7 +41,7 @@ namespace SimpleShop.Service.Services
                 {
                     Article = article,
                     Name = nameWithoutNumber,
-                    Image = "/"+article+"_webp"+".webp",
+                    Image = article+"_webp"+".webp",
                 });
             }
             var getCategories = await _repository.CategoryRepository.GetCategories();
@@ -94,7 +94,7 @@ namespace SimpleShop.Service.Services
                     categoryId = product.ChildNodes.Cast<XmlNode>().FirstOrDefault(n => n.Name == "Группы")
                                             .ChildNodes.Cast<XmlNode>().FirstOrDefault(n => n.Name == "Ид").InnerText;
                     textImage = product.ChildNodes.Cast<XmlNode>().FirstOrDefault(n => n.Name == "Картинка").InnerText;
-                    image = textImage==""?"": textImage.Replace("import_files", "").Replace('.', '_') + ".webp";
+                    image = textImage==""?"": textImage.Replace("import_files/", "").Replace('.', '_') + ".webp";
                 }
                 catch (Exception e )
                 {
