@@ -21,7 +21,7 @@ namespace SimpleShop.Core.Dtos
         [Required(ErrorMessage = "Name is required")]
         public string? Name { get; set; }
 
-
+        public bool Blocked { get; set; }
         public string Role { get; set; }
 
     }

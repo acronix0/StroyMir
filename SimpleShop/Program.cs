@@ -72,8 +72,15 @@ internal class Program
             {
                 var dbContext = scope.ServiceProvider
                     .GetRequiredService<RepositoryContext>();
+                try
+                {
+                    dbContext.Database.Migrate();
+                }
+                catch 
+                {
 
-                dbContext.Database.Migrate();
+                }
+                
             }
 
             var repositoryManager = scope.ServiceProvider.GetRequiredService<IRepositoryManager>();

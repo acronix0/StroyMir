@@ -18,6 +18,7 @@ namespace SimpleShop.Service.Interfaces
         Task<bool> ValidateUserAsync(UserLoginDto loginDto);
         Task<DetailedOperationResult> ChangeInfo(ApplicationUser user, UserRegistrationDto userRegistrationDto);
         Task<IdentityResult> ChangePassword(ApplicationUser user, string password);
+        Task<IdentityResult> Blocked(ApplicationUser user);
         Task<string> CreateTokenAsync();
     }
 }

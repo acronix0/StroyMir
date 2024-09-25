@@ -237,7 +237,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Baskets");
+                    b.ToTable("Baskets", (string)null);
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.BasketProduct", b =>
@@ -263,7 +263,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("BasketProducts");
+                    b.ToTable("BasketProducts", (string)null);
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.Category", b =>
@@ -288,7 +288,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.Feedback", b =>
@@ -321,7 +321,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Feedbacks");
+                    b.ToTable("Feedbacks", (string)null);
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.News", b =>
@@ -353,7 +353,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("News");
+                    b.ToTable("News", (string)null);
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.Order", b =>
@@ -401,7 +401,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.OrderProduct", b =>
@@ -430,7 +430,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderProducts");
+                    b.ToTable("OrderProducts", (string)null);
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.Product", b =>
@@ -466,7 +466,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

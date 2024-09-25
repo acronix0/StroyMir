@@ -62,7 +62,7 @@ namespace SimpleShop.WebApi.Controllers
                 }
 
                 // Путь для сохранения оригинального файла
-                var webpDirectory = Path.Combine(Directory.GetCurrentDirectory(), "shared/static/images");
+                var webpDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/static/images");
                 if (!Directory.Exists(webpDirectory))
                 {
                     return BadRequest("no directory");

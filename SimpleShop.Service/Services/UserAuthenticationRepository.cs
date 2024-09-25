@@ -148,6 +148,13 @@ namespace SimpleShop.Service.Services
             var passwordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
             return await _userManager.ResetPasswordAsync(user, passwordToken, password);
         }
+        public async Task<IdentityResult> Blocked(ApplicationUser user)
+        {
+
+            user.Blocked = true;
+            return await _userManager.UpdateAsync(user);
+            
+        }
         public async Task<bool> ValidateUserAsync(UserLoginDto loginDto)
         {
             _user = await _userManager.FindByEmailAsync(loginDto.Email);

@@ -81,13 +81,42 @@ namespace SimpleShop.WebApi.Controllers
 
             foreach (var product in orderDto.OrderProducts)
             {
+                
+                decimal amount2 = product.ProductPrice * product.Count;
+                // Округляем до двух знаков после запятой
+                amount2 = Math.Round(amount2, 2, MidpointRounding.AwayFromZero);
+                // Получаем абсолютное значение для корректной обработки отрицательных чисел
+                decimal absoluteAmount2 = Math.Abs(amount2);
+                // Разделяем целую и дробную части
+                int integerPart2 = (int)absoluteAmount2;
+                int fractionalPart2 = (int)((absoluteAmount2 - integerPart2) * 100);
+                string integerPartWithSpaces2 = AddThousandSeparators(integerPart2);
+                string formattedNumber2 = $"{integerPartWithSpaces2},{fractionalPart2:D2}";
                 orderDetails.AppendLine($"<p><strong>- Артикль:</strong> {product.ProductArticle}<br>" +
                     $"<strong>Название:</strong> {product.ProductName}<br>" +
                     $"<strong>Количество:</strong> {product.Count}<br>" +
-                    $"<strong>Стоимость:</strong> {(product.ProductPrice * product.Count):C}</p>");
-            }
+                    $"<strong>Стоимость:</strong> {formattedNumber2} руб.</p>");
 
-            orderDetails.AppendLine($"<p><strong>Общая стоимость:</strong> {order.TotalPrice:C}</p>");
+            }
+            decimal amount = order.TotalPrice;
+
+            // Округляем до двух знаков после запятой
+            amount = Math.Round(amount, 2, MidpointRounding.AwayFromZero);
+
+            // Получаем абсолютное значение для корректной обработки отрицательных чисел
+            decimal absoluteAmount = Math.Abs(amount);
+
+            // Разделяем на целую и дробную части
+            int integerPart = (int)absoluteAmount;
+            int fractionalPart = (int)((absoluteAmount - integerPart) * 100);
+
+            // Форматируем целую часть с разделителями тысяч
+            string integerPartWithSpaces = AddThousandSeparators(integerPart);
+
+            // Собираем итоговую строку
+            string formattedNumber = $"{integerPartWithSpaces},{fractionalPart:D2}";
+
+            orderDetails.AppendLine($"<p><strong>Общая стоимость:</strong> {formattedNumber} руб.</p>");
             orderDetails.AppendLine($"<p><strong>Тип доставки:</strong> {order.DeliveryType}</p>");
             orderDetails.AppendLine($"<p><strong>Адрес доставки:</strong> {order.Address}</p>");
             orderDetails.AppendLine($"<p><strong>Дата заказа:</strong> {order.OrderDate}</p>");
@@ -97,6 +126,24 @@ namespace SimpleShop.WebApi.Controllers
             var email = _configuration.GetSection("EmailSettings").GetValue<string>("OrderRecipient");
             await _mailManager.SendMail("Новый заказ", orderDetails.ToString(), email);
             return Ok();
+        }
+        string AddThousandSeparators(int number)
+        {
+            string numberStr = number.ToString();
+            StringBuilder sb = new StringBuilder();
+
+            int counter = 0;
+            for (int i = numberStr.Length - 1; i >= 0; i--)
+            {
+                sb.Insert(0, numberStr[i]);
+                counter++;
+                if (counter == 3 && i != 0)
+                {
+                    sb.Insert(0, ' ');
+                    counter = 0;
+                }
+            }
+            return sb.ToString();
         }
     }
 }

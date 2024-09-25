@@ -25,6 +25,15 @@ namespace SimpleShop.WebApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Authenticate([FromBody] UserLoginDto user)
         {
+            try
+            {
+                var blocked = (await _userManager.FindByEmailAsync(user.Email)).Blocked;
+                if (blocked) { return Unauthorized(); }
+            }
+            catch
+            {
+                return BadRequest();
+            }
             var valid = await _repositoryManager.UserAuthentication.ValidateUserAsync(user);
             if (valid)
             {
@@ -39,7 +48,7 @@ namespace SimpleShop.WebApi.Controllers
             var result = await  _repositoryManager.UserAuthentication.AddUserAsync(user);
             if (result.Succeeded)
             {
-                _repositoryManager.UserAuthentication.AddUserRoleAsync(user, "Admin").Wait();
+                _repositoryManager.UserAuthentication.AddUserRoleAsync(user, "Client").Wait();
                 return Ok(new { Token = await _repositoryManager.UserAuthentication.CreateTokenAsync() });
             }
             var errorMessage = result.Errors.Select(e => e.Description).ToList();
