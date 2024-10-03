@@ -19,6 +19,7 @@ namespace SimpleShop.Service.Interfaces
         Task<DetailedOperationResult> ChangeInfo(ApplicationUser user, UserRegistrationDto userRegistrationDto);
         Task<IdentityResult> ChangePassword(ApplicationUser user, string password);
         Task<IdentityResult> Blocked(ApplicationUser user);
+        Task<IdentityResult> UnBlocked(ApplicationUser user);
         Task<string> CreateTokenAsync();
     }
 }

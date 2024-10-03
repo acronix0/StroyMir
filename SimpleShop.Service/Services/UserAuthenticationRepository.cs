@@ -153,7 +153,14 @@ namespace SimpleShop.Service.Services
 
             user.Blocked = true;
             return await _userManager.UpdateAsync(user);
-            
+
+        }
+        public async Task<IdentityResult> UnBlocked(ApplicationUser user)
+        {
+
+            user.Blocked = false;
+            return await _userManager.UpdateAsync(user);
+
         }
         public async Task<bool> ValidateUserAsync(UserLoginDto loginDto)
         {

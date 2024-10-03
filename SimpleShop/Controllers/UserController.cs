@@ -57,7 +57,29 @@ namespace SimpleShop.WebApi.Controllers
 
             return Ok(usersDto);
         }
-        [HttpPost("block-users")]
+        [HttpPost("unblock-users")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> UnBlockUser([FromBody] string userEmail)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(userEmail);
+                if (user == null || userEmail == null|| userEmail == "")
+                    return BadRequest();
+
+                var result = await _repositoryManager.UserAuthentication.UnBlocked(user);
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }
+                return BadRequest(result);
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(new { Errors = e.Message });
+            }
+        }  [HttpPost("block-users")]
         [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> BlockUser([FromBody] string userEmail)
         {
