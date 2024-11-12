@@ -78,10 +78,19 @@ namespace SimpleShop.WebApi.Controllers
             orderDetails.AppendLine($"<p><strong>Email заказчика:</strong> {order.RecipientEmail}</p>");
             orderDetails.AppendLine($"<p><strong>Телефон заказчика:</strong> {order.RecipientPhone}</p>");
             orderDetails.AppendLine("<p><strong>Товары в заказе:</strong></p>");
+            orderDetails.AppendLine("<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>");
+            orderDetails.AppendLine("<thead>");
+            orderDetails.AppendLine("<tr>");
+            orderDetails.AppendLine("<th>Артикул</th>");
+            orderDetails.AppendLine("<th>Название</th>");
+            orderDetails.AppendLine("<th>Количество</th>");
+            orderDetails.AppendLine("<th>Стоимость</th>");
+            orderDetails.AppendLine("</tr>");
+            orderDetails.AppendLine("</thead>");
+            orderDetails.AppendLine("<tbody>");
 
             foreach (var product in orderDto.OrderProducts)
             {
-                
                 decimal amount2 = product.ProductPrice * product.Count;
                 // Округляем до двух знаков после запятой
                 amount2 = Math.Round(amount2, 2, MidpointRounding.AwayFromZero);
@@ -92,12 +101,18 @@ namespace SimpleShop.WebApi.Controllers
                 int fractionalPart2 = (int)((absoluteAmount2 - integerPart2) * 100);
                 string integerPartWithSpaces2 = AddThousandSeparators(integerPart2);
                 string formattedNumber2 = $"{integerPartWithSpaces2},{fractionalPart2:D2}";
-                orderDetails.AppendLine($"<p><strong>- Артикль:</strong> {product.ProductArticle}<br>" +
-                    $"<strong>Название:</strong> {product.ProductName}<br>" +
-                    $"<strong>Количество:</strong> {product.Count}<br>" +
-                    $"<strong>Стоимость:</strong> {formattedNumber2} руб.</p>");
 
+                // Формируем строку таблицы с данными товара
+                orderDetails.AppendLine("<tr>");
+                orderDetails.AppendLine($"<td>{product.ProductArticle}</td>");
+                orderDetails.AppendLine($"<td>{product.ProductName}</td>");
+                orderDetails.AppendLine($"<td>{product.Count}</td>");
+                orderDetails.AppendLine($"<td>{formattedNumber2} руб.</td>");
+                orderDetails.AppendLine("</tr>");
             }
+
+            orderDetails.AppendLine("</tbody>");
+            orderDetails.AppendLine("</table>");
             decimal amount = order.TotalPrice;
 
             // Округляем до двух знаков после запятой

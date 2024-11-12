@@ -70,9 +70,20 @@ namespace SimpleShop.WebApi.Controllers
             await _basketManager.RemoveProductFromBasket(user, productArticle);
             return Ok();
         }
+
+        [HttpGet("clear-basket")]
+        [Authorize]
+        public async Task<IActionResult> ClearBasket()
+        {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            if (user == null)
+                return Unauthorized();
+            await _basketManager.ClearBasket(user);
+            return Ok();
+        }
         [HttpPost("change-product-count")]
         [Authorize]
-        public async Task<IActionResult> ChangeProductCount([FromBody] string productArticle,  int count)
+        public async Task<IActionResult> ChangeProductCount(string productArticle,  int count)
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             if (user == null)

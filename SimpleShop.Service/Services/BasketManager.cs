@@ -51,6 +51,18 @@ namespace SimpleShop.Service.Services
             await _repositoryManager.SaveAsync();
             return basket;
         }
+        public async Task ClearBasket(ApplicationUser user)
+        {
+            var basket = await GetBasket(user);
+            if (basket.BasketProducts.Count>0)
+            {
+                foreach (var basketProduct in basket.BasketProducts)
+                {
+                    await _repositoryManager.BasketProductRepository.DeleteBasketProduct(basketProduct);
+                }
+                await _repositoryManager.SaveAsync();
+            }
+        }
 
         public async Task RemoveProductFromBasket(ApplicationUser user, string productArticle)
         {
@@ -68,7 +80,7 @@ namespace SimpleShop.Service.Services
             var basketProduct = basket.BasketProducts.FirstOrDefault(basket => basket.Product.Article == productArticle);
             if (basketProduct != null)
             {
-                basketProduct.Count += count;
+                basketProduct.Count = count;
                 await _repositoryManager.BasketProductRepository.UpdateBasketProduct(basketProduct);
                 await _repositoryManager.SaveAsync();
             }

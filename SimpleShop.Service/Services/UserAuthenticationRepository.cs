@@ -80,6 +80,10 @@ namespace SimpleShop.Service.Services
                     result.AddErrors(passResult.Errors, "Name Change");
                 }
             }
+            else
+            {
+                result.PasswordChangeSucceeded = true;
+            }
             if (userRegistrationDto.Name != user.DisplayName)
             {
                 user.DisplayName = userRegistrationDto.Name;

@@ -31,7 +31,10 @@ namespace SimpleShop.Service.Services
             var x = await CreateAsync(basket);
             return x.Entity; 
         }
-
+        public async Task ClearBasket(ApplicationUser user, bool trackChanges)
+        {
+            var basket = await GetBasketByUser(user, trackChanges);
+        }
         public async Task AddBasket(Basket basket) =>
             await CreateAsync(basket);
         public async Task DeleteBasket(Basket basket) =>
