@@ -37,9 +37,13 @@ namespace SimpleShop.Service.Services
             return  query;
         }
 
-        public Task<IEnumerable<Order>> GetOrders()
+        public async Task<IEnumerable<Order>> GetOrders()
         {
-            throw new NotImplementedException();
+            var query = await FindByConditionAsyncWithIncludeCollection(
+               o => true,
+               op => op.OrderProducts,
+               op => op.Product).Result.ToListAsync();
+            return query;
         }
 
         public Task UpdateOrder(Order order)

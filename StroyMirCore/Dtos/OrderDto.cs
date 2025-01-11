@@ -12,6 +12,7 @@ namespace SimpleShop.Core.Dtos
         public int Id { get; set; }
         public List<OrderProductDto> OrderProducts { get; set; }
         public decimal TotalPrice { get; set; }
+        public DateTime OrderDate { get; set; }
         public string DeliveryType { get; set; }
         public string RecipientName { get; set; }
         public string RecipientPhone { get; set; }

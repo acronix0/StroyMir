@@ -29,6 +29,7 @@ internal class Program
         
         builder.Services.ConfigureRepositoryManager();
         builder.Services.AddScoped<ImportManager>();
+        builder.Services.AddSingleton<TelegramBotManager>();
         builder.Services.Configure<FormOptions>(options =>
         {
             options.MultipartBodyLengthLimit = 104857600; // 100 MB
