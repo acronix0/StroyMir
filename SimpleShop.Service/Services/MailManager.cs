@@ -22,7 +22,7 @@ namespace SimpleShop.Service.Services
             _smtpPass = configSection.GetValue<string>("SmtpPass");
             _smtpServer = configSection.GetValue<string>("SmtpServer");
         }
-        public async Task<bool> SendMail(string subject, string body, string toEmail)
+        public async Task<string> SendMail(string subject, string body, string toEmail)
         {
             int smtpPort = 587;
             string fromEmail = _smtpUser;
@@ -50,12 +50,12 @@ namespace SimpleShop.Service.Services
                     await client.AuthenticateAsync(_smtpUser, _smtpPass);
                     await client.SendAsync(message);
                     await client.DisconnectAsync(true);
-                    return true;
+                    return "";
                 }
                 catch (Exception ex)
                 {
                     // Логирование ошибки ex или другие действия
-                    return false;
+                    return ex.Message;
                 }
             }
         }

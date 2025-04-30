@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SimpleShop.Core.Dtos;
 using SimpleShop.Core.Model;
 using SimpleShop.Service.Interfaces;
@@ -220,116 +221,132 @@ namespace SimpleShop.WebApi.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateOrders([FromBody] OrderDto orderDto)
         {
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            if (user == null)
-                return Unauthorized();
-            var order = new Order()
+            if (orderDto == null || orderDto.OrderProducts == null || !orderDto.OrderProducts.Any())
             {
-                Address = orderDto.Address,
-                Comment = orderDto.Comment,
-                DeliveryType = orderDto.DeliveryType,
-                OrderDate = DateTime.Now,
-                OrderProducts = new List<OrderProduct>(),
-                RecipientEmail = orderDto.RecipientEmail,
-                RecipientName = orderDto.RecipientName,
-                RecipientPhone = orderDto.RecipientPhone,
-                TotalPrice = orderDto.TotalPrice,
-                User = user
-            };
-            foreach (var item in orderDto.OrderProducts)
-            {
-                order.OrderProducts.Add(new OrderProduct()
-                {
-                    Order = order,
-                    
-                    ProductId = item.ProductId,
-                    Count = item.Count,
-                    TotalPrice = item.ProductPrice
-                });
-                var product = await _repositoryManager.ProductRepository.GetProduct(item.ProductId);
-                await _repositoryManager.ProductRepository.UpdateProduct(product);
-                product.Count -= item.Count;
+                return BadRequest("Некорректные входные данные.");
             }
 
-            await _repositoryManager.OrderRepository.AddOrder(order);
-            
-            await _repositoryManager.SaveAsync();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+                if (user == null)
+                    return Unauthorized();
 
-            orderDto.Id = order.Id;
+                var order = new Order()
+                {
+                    Address = orderDto.Address,
+                    Comment = orderDto.Comment,
+                    DeliveryType = orderDto.DeliveryType,
+                    OrderDate = DateTime.Now,
+                    OrderProducts = new List<OrderProduct>(),
+                    RecipientEmail = orderDto.RecipientEmail,
+                    RecipientName = orderDto.RecipientName,
+                    RecipientPhone = orderDto.RecipientPhone,
+                    TotalPrice = orderDto.TotalPrice,
+                    User = user
+                };
 
-                await _telegramBotManager.SendNewOrderAsync(orderDto, _configuration.GetValue<string>("BaseUrl"));
-                return Ok();
+                var insufficientMessages = new List<string>();
 
-            //var orderDetails = new StringBuilder();
+                foreach (var item in orderDto.OrderProducts)
+                {
+                    var product = await _repositoryManager.ProductRepository.GetProduct(item.ProductId);
+                    if (product == null)
+                    {
+                        return NotFound($"Товар с Артикулом {item.ProductArticle} не найден.");
+                    }
 
-            //orderDetails.AppendLine($"<p><strong>Имя заказчика:</strong> {order.RecipientName}</p>");
-            //orderDetails.AppendLine($"<p><strong>Email заказчика:</strong> {order.RecipientEmail}</p>");
-            //orderDetails.AppendLine($"<p><strong>Телефон заказчика:</strong> {order.RecipientPhone}</p>");
-            //orderDetails.AppendLine("<p><strong>Товары в заказе:</strong></p>");
-            //orderDetails.AppendLine("<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>");
-            //orderDetails.AppendLine("<thead>");
-            //orderDetails.AppendLine("<tr>");
-            //orderDetails.AppendLine("<th>Артикул</th>");
-            //orderDetails.AppendLine("<th>Название</th>");
-            //orderDetails.AppendLine("<th>Количество</th>");
-            //orderDetails.AppendLine("<th>Стоимость</th>");
-            //orderDetails.AppendLine("</tr>");
-            //orderDetails.AppendLine("</thead>");
-            //orderDetails.AppendLine("<tbody>");
+                    if (product.Count < item.Count)
+                    {
+                        insufficientMessages.Add($"Недостаточное количество товара (Артикул: {item.ProductArticle}). Доступно: {product.Count}, запрошено: {item.Count}.");
+                        continue;
+                    }
 
-            //foreach (var product in orderDto.OrderProducts)
-            //{
-            //    decimal amount2 = product.ProductPrice;
-            //    // Округляем до двух знаков после запятой
-            //    amount2 = Math.Round(amount2, 2, MidpointRounding.AwayFromZero);
-            //    // Получаем абсолютное значение для корректной обработки отрицательных чисел
-            //    decimal absoluteAmount2 = Math.Abs(amount2);
-            //    // Разделяем целую и дробную части
-            //    int integerPart2 = (int)absoluteAmount2;
-            //    int fractionalPart2 = (int)((absoluteAmount2 - integerPart2) * 100);
-            //    string integerPartWithSpaces2 = AddThousandSeparators(integerPart2);
-            //    string formattedNumber2 = $"{integerPartWithSpaces2},{fractionalPart2:D2}";
+                    order.OrderProducts.Add(new OrderProduct()
+                    {
+                        Order = order,
+                        ProductId = item.ProductId,
+                        Count = item.Count,
+                        TotalPrice = item.ProductPrice
+                    });
 
-            //    // Формируем строку таблицы с данными товара
-            //    orderDetails.AppendLine("<tr>");
-            //    orderDetails.AppendLine($"<td>{product.ProductArticle}</td>");
-            //    orderDetails.AppendLine($"<td>{product.ProductName}</td>");
-            //    orderDetails.AppendLine($"<td>{product.Count}</td>");
-            //    orderDetails.AppendLine($"<td>{formattedNumber2} руб.</td>");
-            //    orderDetails.AppendLine("</tr>");
-            //}
+                    product.Count -= item.Count;
+                    await _repositoryManager.ProductRepository.UpdateProduct(product);
+                }
 
-            //orderDetails.AppendLine("</tbody>");
-            //orderDetails.AppendLine("</table>");
-            //decimal amount = order.TotalPrice;
+                if (insufficientMessages.Any())
+                {
+                    return BadRequest(string.Join(" ", insufficientMessages));
+                }
 
-            //// Округляем до двух знаков после запятой
-            //amount = Math.Round(amount, 2, MidpointRounding.AwayFromZero);
+                await _repositoryManager.OrderRepository.AddOrder(order);
+                await _repositoryManager.SaveAsync();
 
-            //// Получаем абсолютное значение для корректной обработки отрицательных чисел
-            //decimal absoluteAmount = Math.Abs(amount);
+                orderDto.Id = order.Id;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                try { await _telegramBotManager.SendSerg(orderDto.Id, "db ex:  " + dbEx.Message); } catch { }
+                return StatusCode(500, "Произошла внутренняя ошибка сервера.");
+            }
+            catch (Exception ex)
+            {
+                try { await _telegramBotManager.SendSerg(orderDto.Id, "server ex:  " + ex.Message); } catch { }
+                return StatusCode(500, "Произошла внутренняя ошибка сервера.");
+            }
 
-            //// Разделяем на целую и дробную части
-            //int integerPart = (int)absoluteAmount;
-            //int fractionalPart = (int)((absoluteAmount - integerPart) * 100);
+            try
+            {
+                try
+                {
+                    await _telegramBotManager.SendNewOrderAsync(orderDto, _configuration.GetValue<string>("BaseUrl"));
+                }
+                catch { }
+            }
+            catch
+            {
+                try
+                {
+                    await _telegramBotManager.SendSimpleOrder(orderDto.Id, _configuration.GetValue<string>("BaseUrl"));
+                }
+                catch { }
+            }
 
-            //// Форматируем целую часть с разделителями тысяч
-            //string integerPartWithSpaces = AddThousandSeparators(integerPart);
-
-            //// Собираем итоговую строку
-            //string formattedNumber = $"{integerPartWithSpaces},{fractionalPart:D2}";
-
-            //orderDetails.AppendLine($"<p><strong>Общая стоимость:</strong> {formattedNumber} руб.</p>");
-            //orderDetails.AppendLine($"<p><strong>Тип доставки:</strong> {order.DeliveryType}</p>");
-            //orderDetails.AppendLine($"<p><strong>Адрес доставки:</strong> {orderDto.Address}</p>");
-            //orderDetails.AppendLine($"<p><strong>Дата заказа:</strong> {order.OrderDate}</p>");
-            //orderDetails.AppendLine($"<p><strong>Комментарий:</strong> {orderDto.Comment}</p>");
-
-
-            //var email = _configuration.GetSection("EmailSettings").GetValue<string>("OrderRecipient");
-            //await _mailManager.SendMail("Новый заказ", orderDetails.ToString(), email);
-            //return Ok();
+            return Ok(new { Message = "Заказ успешно создан", OrderId = orderDto.Id });
         }
         
+        [Authorize]
+        [HttpPost("check-availability")]
+        public async Task<IActionResult> CheckProductAvailability([FromBody] List<int> productIds)
+        {
+            if (productIds == null || !productIds.Any())
+            {
+                return BadRequest("Список ID товаров пуст или не передан.");
+            }
+
+            var result = new Dictionary<int, int>();
+
+            foreach (var id in productIds)
+            {
+                Product? product = null;
+                try
+                {
+                    product = await _repositoryManager.ProductRepository.GetProduct(id);
+                }
+                catch 
+                {
+                }
+                if (product != null)
+                {
+                    result[id] = product.Count;
+                }
+                else
+                {
+                    result[id] = -1; // Или можно вообще не добавлять, если товар не найден
+                }
+            }
+
+            return Ok(result);
+        }
     }
 }

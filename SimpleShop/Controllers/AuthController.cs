@@ -71,11 +71,16 @@ namespace SimpleShop.WebApi.Controllers
             var x = await _repositoryManager.UserAuthentication.ChangePassword(user, password);
             if (x.Succeeded)
             {
-                await _mailManager.SendMail("Восстановление учетной записи",
+                
+                var mailError = await _mailManager.SendMail("Восстановление учетной записи",
                     $"Добрый день!\n\n" +
                     $"На сайте DMTrade был сделан запрос на изменение вашего пароля.\n\n" +
                     $"Новый пароль: {password}\n\n\n" +
                     $"С уважением,\nадминистрация DMTrade\nhttps://dm-trade.pro", Email);
+                if (mailError != "")
+                {
+                    return BadRequest(new { status = "error", message = String.Join(", ", mailError) });
+                }
                 return Ok();
             }
             return BadRequest();

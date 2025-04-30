@@ -17,12 +17,14 @@ namespace SimpleShop.Service.Services
     {
         private readonly TelegramBotClient _botClient;
         private readonly string _chatId;
+        private readonly string _sergId;
 
         public TelegramBotManager(IConfiguration configuration)
         {
             // Получаем токен и ID группы из appsettings.json
             string botToken = configuration.GetSection("TGBot").GetValue<string>("token");
             _chatId = configuration.GetSection("TGBot").GetValue<string>("groupId");
+            _sergId = configuration.GetSection("TGBot").GetValue<string>("sergId");
 
             if (string.IsNullOrEmpty(botToken) || string.IsNullOrEmpty(_chatId))
             {
@@ -41,7 +43,7 @@ namespace SimpleShop.Service.Services
             orderMessage.AppendLine($"📞 *Телефон заказчика:* {order.RecipientPhone}");
             if (!string.IsNullOrEmpty(order.RecipientEmail))
             {
-                orderMessage.AppendLine($"📧 *Email заказчика:* {order.RecipientEmail}");
+                orderMessage.AppendLine($"📧 *Email заказчика:* {EscapeMarkdown(order.RecipientEmail)}");
             }
             orderMessage.AppendLine($"\n💰 *Общая стоимость:* {FormatPriceDecimal(order.TotalPrice)}");
             orderMessage.AppendLine($"\n🚚 *Тип доставки:* {order.DeliveryType}");
@@ -60,13 +62,95 @@ namespace SimpleShop.Service.Services
             orderMessage.AppendLine($"\n🔗 *Ссылка на заказ:* [Посмотреть заказ]({orderUrl})");
 
             // Отправляем сообщение в Telegram
-            await _botClient.SendTextMessageAsync(
-                chatId: _chatId,
-                text: orderMessage.ToString(),
-                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
+            try
+            {
+                await _botClient.SendTextMessageAsync(
+              chatId: _chatId,
+              text: orderMessage.ToString(),
+              parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
             );
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Telegram API Error: {ex.Message}");
+            }
+          
         }
 
+        public async Task SendSimpleOrder(int orderId, string orderBaseUrl)
+        {
+            // Формируем текст сообщения с деталями заказа
+            var orderMessage = new StringBuilder();
+            orderMessage.AppendLine($"🛒 *Новый заказ #{orderId}*");
+
+
+            // Добавляем ссылку на заказ
+            string orderUrl = $"{orderBaseUrl}/api/order/{orderId}";
+            orderMessage.AppendLine($"\n🔗 *Данные заказа:* [Посмотреть заказ]({orderUrl})");
+
+            // Отправляем сообщение в Telegram
+            try
+            {
+              await _botClient.SendTextMessageAsync(
+              chatId: _chatId,
+              text: orderMessage.ToString(),
+              parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
+            );
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Telegram API Error: {ex.Message}");
+            }
+
+        }
+
+        public async Task SendSerg(int orderId, string msg)
+        {
+            // Формируем текст сообщения с деталями заказа
+            var orderMessage = new StringBuilder();
+            orderMessage.AppendLine(msg);
+
+            // Отправляем сообщение в Telegram
+            try
+            {
+                await _botClient.SendTextMessageAsync(
+                chatId: _sergId,
+                text: orderMessage.ToString()
+              );
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Telegram API Error: {ex.Message}");
+            }
+
+        }
+        string EscapeMarkdown(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            return input
+                .Replace("_", "\\_")
+                .Replace("*", "\\*")
+                .Replace("[", "\\[")
+                .Replace("]", "\\]")
+                .Replace("(", "\\(")
+                .Replace(")", "\\)")
+                .Replace("~", "\\~")
+                .Replace("`", "\\`")
+                .Replace(">", "\\>")
+                .Replace("#", "\\#")
+                .Replace("+", "\\+")
+                .Replace("-", "\\-")
+                .Replace("=", "\\=")
+                .Replace("|", "\\|")
+                .Replace("{", "\\{")
+                .Replace("}", "\\}")
+                .Replace("!", "\\!");
+        }
 
         // Вспомогательный метод для форматирования цен
         private string FormatPriceDecimal(decimal price)
