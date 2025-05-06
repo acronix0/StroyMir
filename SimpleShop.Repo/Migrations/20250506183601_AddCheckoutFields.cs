@@ -4,7 +4,7 @@
 
 namespace SimpleShop.Repo.Migrations
 {
-    public partial class categoryIdInProduct : Migration
+    public partial class AddCheckoutFields : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

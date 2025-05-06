@@ -11,7 +11,6 @@ namespace SimpleShop.Service.Interfaces
     {
         Task AddBasket(Basket basket);
         Task<Basket> GetBasketByUser(ApplicationUser user, bool trackChanges);
-        Task ClearBasket(ApplicationUser user, bool trackChanges);
         Task DeleteBasket(Basket basket);
         Task UpdateBasket(Basket basket);
     }

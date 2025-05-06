@@ -10,6 +10,7 @@ namespace SimpleShop.Core.Dtos
     public class OrderDto
     {
         public int Id { get; set; }
+        //Deprecated. Use Checkout()
         public List<OrderProductDto> OrderProducts { get; set; }
         public decimal TotalPrice { get; set; }
         public DateTime OrderDate { get; set; }

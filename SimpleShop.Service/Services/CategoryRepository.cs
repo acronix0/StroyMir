@@ -28,7 +28,7 @@ namespace SimpleShop.Service.Services
             await FindAllAsync(false);
 
         public async Task<Category> GetCategory(int id) => 
-            await FindByConditionAsync(c => c.Id == id).Result.SingleAsync();
+            await FindByConditionAsync(c => c.Id == id).Result.FirstOrDefaultAsync();
 
         public async Task UpdateCategory(Category category)=>
             await UpdateAsync(category);

@@ -11,5 +11,6 @@ namespace SimpleShop.Service.Interfaces
     {
         Task DeleteBasketProduct(BasketProduct basketProduct);
         Task UpdateBasketProduct(BasketProduct basketProduct);
+        Task ClearBasketProducts(int basketId);
     }
 }

@@ -12,8 +12,8 @@ using SimpleShop.Repo.Data;
 namespace SimpleShop.Repo.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20240813215736_UserToBasketAndOrder")]
-    partial class UserToBasketAndOrder
+    [Migration("20250506183601_AddCheckoutFields")]
+    partial class AddCheckoutFields
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -164,8 +164,15 @@ namespace SimpleShop.Repo.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("Blocked")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -227,6 +234,30 @@ namespace SimpleShop.Repo.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeliveryType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecipientEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecipientName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecipientPhone")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .HasColumnType("text");
@@ -370,8 +401,9 @@ namespace SimpleShop.Repo.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("DeliveryType")
-                        .HasColumnType("integer");
+                    b.Property<string>("DeliveryType")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp without time zone");

@@ -86,7 +86,7 @@ namespace SimpleShop.Service.Services
             return query;
         }
         public async Task<Product> GetProduct(string productArticle)=>
-            await FindByConditionAsync(p => p.Article == productArticle).Result.SingleAsync();
+            await FindByConditionAsync(p => p.Article == productArticle).Result.FirstOrDefaultAsync();
         public async Task AddProduct(Product product)=>
             await CreateAsync(product);
         public async Task AddRangeProduct(IEnumerable<Product> products) =>
@@ -103,6 +103,6 @@ namespace SimpleShop.Service.Services
             await FindAllAsync(false);
 
         public async Task<Product> GetProduct(int id)=>
-            await FindByConditionAsync(p => p.Id == id).Result.SingleAsync();
+            await FindByConditionAsync(p => p.Id == id).Result.FirstOrDefaultAsync();
     }
 }

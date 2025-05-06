@@ -4,12 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleShop.Core.Model
+namespace SimpleShop.Core.Dtos
 {
-    public class Basket : BaseEntity
+    public class CheckoutDto
     {
-        public List<BasketProduct> BasketProducts { get; set; } = new List<BasketProduct>();
-        public ApplicationUser User { get; set; }
+        public int Id { get; set; }
+        public List<BasketProductDto> BasketProducts { get; set; }
+        public OrderInfo OrderInfo { get; set; }
+        
+    }
+    public class OrderInfo
+    {
+        public string UserId { get; set; }
         public string DeliveryType { get; set; }
         public string RecipientName { get; set; }
         public string RecipientPhone { get; set; }

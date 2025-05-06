@@ -58,6 +58,15 @@ namespace SimpleShop.Repo.GenericRepository.Service
             await Task.Run(() => RepositoryContext.Set<T>().UpdateRange(entity));
         public async Task RemoveAsync(T entity) =>
              await Task.Run(() => RepositoryContext.Set<T>().Remove(entity));
+        public async Task DeleteWhereAsync<TEntity>(Expression<Func<TEntity, bool>> predicate)
+            where TEntity : class
+        {
+            var entities = await RepositoryContext.Set<TEntity>()
+                .Where(predicate)
+                .ToListAsync();
+
+            RepositoryContext.Set<TEntity>().RemoveRange(entities);
+        }
         public static IQueryable<T> Between<TKey>( IQueryable<T> query, Expression<Func<T, TKey>> keySelector, TKey low, TKey high) where TKey : IComparable<TKey>
         {
             Expression key = Expression.Invoke(keySelector,

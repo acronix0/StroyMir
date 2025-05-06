@@ -162,6 +162,9 @@ namespace SimpleShop.Repo.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("Blocked")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -230,6 +233,30 @@ namespace SimpleShop.Repo.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeliveryType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecipientEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecipientName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecipientPhone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("UserId")
                         .HasColumnType("text");
 
@@ -237,7 +264,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Baskets", (string)null);
+                    b.ToTable("Baskets");
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.BasketProduct", b =>
@@ -263,7 +290,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("BasketProducts", (string)null);
+                    b.ToTable("BasketProducts");
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.Category", b =>
@@ -288,7 +315,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.Feedback", b =>
@@ -321,7 +348,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Feedbacks", (string)null);
+                    b.ToTable("Feedbacks");
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.News", b =>
@@ -353,7 +380,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("News", (string)null);
+                    b.ToTable("News");
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.Order", b =>
@@ -401,7 +428,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.OrderProduct", b =>
@@ -430,7 +457,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderProducts", (string)null);
+                    b.ToTable("OrderProducts");
                 });
 
             modelBuilder.Entity("SimpleShop.Core.Model.Product", b =>
@@ -466,7 +493,7 @@ namespace SimpleShop.Repo.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

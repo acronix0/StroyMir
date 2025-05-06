@@ -20,5 +20,7 @@ namespace SimpleShop.Service.Services
             await RemoveAsync(basketProduct);
         public async Task UpdateBasketProduct(BasketProduct basketProduct) =>
             await UpdateAsync(basketProduct);
+        public async Task ClearBasketProducts(int basketId) =>
+           await DeleteWhereAsync<BasketProduct>(p => p.BasketId == basketId);
     }
 }

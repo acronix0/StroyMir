@@ -11,9 +11,9 @@ namespace SimpleShop.Service.Interfaces
     public interface IBasketManager
     {
         Task<Basket> GetBasket(ApplicationUser user);
-        Task AddProductToBasket(ApplicationUser user, string productArticle, int count);
+        Task<string> AddProductToBasket(ApplicationUser user, string productArticle, int count);
         Task RemoveProductFromBasket(ApplicationUser user, string productArticle);
-        Task ChangeProductCount(ApplicationUser user, string productArticle, int count);
+        Task<string> ChangeProductCount(ApplicationUser user, string productArticle, int count);
 
     }
 }

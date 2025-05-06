@@ -19,22 +19,39 @@ namespace SimpleShop.Service.Services
         {
         }
         public async Task<Basket> GetBasketByUser(ApplicationUser user, bool trackChanges) {
+            
+            Basket? basket = null;
+            try
+            {   //Ищем корзину с товарами
+                basket = await FindByConditionAsyncWithIncludeCollection(
+                    b => b.User.Id == user.Id,
+                    b => b.BasketProducts,
+                    bp => bp.Product
+                ).Result.FirstOrDefaultAsync();
+            }
+            catch
+            {   //без товаров
+                try
+                {
+                    basket = await FindByConditionAsync(p => p.User.Id == user.Id).Result.FirstOrDefaultAsync();
+                    if (basket != null)
+                    {
+                        await DeleteBasket(basket);
+                    }
+                }catch {}
+            }
 
-            var basket = await FindByConditionAsyncWithIncludeCollection(
-                b => b.User.Id == user.Id,
-                b => b.BasketProducts,
-                bp => bp.Product
-            ).Result.FirstOrDefaultAsync();
+           
             if (basket != null)
+            {
                 return basket;
+            }
+               
             basket = new Basket() { BasketProducts = new List<BasketProduct>(), User = user };
             var x = await CreateAsync(basket);
             return x.Entity; 
         }
-        public async Task ClearBasket(ApplicationUser user, bool trackChanges)
-        {
-            var basket = await GetBasketByUser(user, trackChanges);
-        }
+
         public async Task AddBasket(Basket basket) =>
             await CreateAsync(basket);
         public async Task DeleteBasket(Basket basket) =>

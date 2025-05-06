@@ -32,7 +32,7 @@ namespace SimpleShop.Service.Services
         Task<T> GetEntity(int id, bool trackChanges)
         {
             var query = FindByConditionAsync(b => b.Id == id, trackChanges);
-            return query.Result.SingleAsync() as Task<T>;
+            return query.Result.FirstOrDefaultAsync() as Task<T>;
         }
 
         public Task DeleteEntity(BaseEntity baseEntity)=>

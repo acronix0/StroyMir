@@ -21,28 +21,55 @@ namespace SimpleShop.Service.Services
             _repositoryManager = repositoryManager;
         }
 
-        public async Task AddProductToBasket(ApplicationUser user, string productArticle, int count)
+        public async Task<string> AddProductToBasket(ApplicationUser user, string productArticle, int count)
         {
-            var basket = await GetBasket(user);
-            var basketProduct = basket.BasketProducts.FirstOrDefault(b=>b.Product.Article == productArticle);
-            var product = await _repositoryManager.ProductRepository.GetProduct(productArticle);
-            if (basketProduct == null)
+            try
             {
-                basketProduct = new BasketProduct()
+                var basket = await GetBasket(user);
+                if (basket == null)
+                    return "Не удалось получить корзину пользователя.";
+
+                int inStock = -1;
+                var product = await _repositoryManager.ProductRepository.GetProduct(productArticle);
+                if (product == null)
+                    return "Продукт с указанной статьей не найден.";
+
+                inStock = product.Count;
+
+                var basketProduct = basket.BasketProducts.FirstOrDefault(b => b.Product.Article == productArticle);
+                int totalRequested = count;
+
+                if (basketProduct != null)
+                    totalRequested += basketProduct.Count;
+
+                if (totalRequested > inStock)
+                    return $"Недостаточно товара на складе. В наличии: {inStock}, требуется: {totalRequested}.";
+
+                if (basketProduct == null)
                 {
-                    ProductId = product.Id,
-                    Product = product,
-                    Basket = basket,
-                    Count = count
-                };
-                basket.BasketProducts.Add(basketProduct);
+                    basketProduct = new BasketProduct()
+                    {
+                        ProductId = product.Id,
+                        Product = product,
+                        Basket = basket,
+                        Count = count
+                    };
+                    basket.BasketProducts.Add(basketProduct);
+                }
+                else
+                {
+                    basketProduct.Count += count;
+                }
+
+                await _repositoryManager.BasketRepository.UpdateBasket(basket);
+                await _repositoryManager.SaveAsync();
+
+                return "";
             }
-            else
+            catch (Exception)
             {
-                basketProduct.Count += count;
+                return "Произошла ошибка при добавлении товара в корзину.";
             }
-            await _repositoryManager.BasketRepository.UpdateBasket(basket);
-            await _repositoryManager.SaveAsync();
         }
 
         public async Task<Basket> GetBasket(ApplicationUser user)
@@ -54,14 +81,8 @@ namespace SimpleShop.Service.Services
         public async Task ClearBasket(ApplicationUser user)
         {
             var basket = await GetBasket(user);
-            if (basket.BasketProducts.Count>0)
-            {
-                foreach (var basketProduct in basket.BasketProducts)
-                {
-                    await _repositoryManager.BasketProductRepository.DeleteBasketProduct(basketProduct);
-                }
-                await _repositoryManager.SaveAsync();
-            }
+            await _repositoryManager.BasketProductRepository.ClearBasketProducts(basket.Id);
+            await _repositoryManager.SaveAsync();
         }
 
         public async Task RemoveProductFromBasket(ApplicationUser user, string productArticle)
@@ -74,16 +95,44 @@ namespace SimpleShop.Service.Services
                 await _repositoryManager.SaveAsync();
             }
         }
-        public async Task ChangeProductCount(ApplicationUser user, string productArticle, int count)
+        public async Task<string> ChangeProductCount(ApplicationUser user, string productArticle, int count)
         {
             var basket = await GetBasket(user);
+            int inStock = -1;
+            var product = await _repositoryManager.ProductRepository.GetProduct(productArticle);
+            if (product != null)
+            {
+                inStock = product.Count;
+            }
             var basketProduct = basket.BasketProducts.FirstOrDefault(basket => basket.Product.Article == productArticle);
+
+            if (basketProduct == null)
+            {
+                if (inStock < basketProduct.Count)
+                {
+                    return "Недостаточно товара на складе, в наличии: " + inStock + " шт.";
+                }
+                basketProduct = new BasketProduct()
+                {
+                    ProductId = product.Id,
+                    Product = product,
+                    Basket = basket,
+                    Count = count
+                };
+                basket.BasketProducts.Add(basketProduct);
+            }
             if (basketProduct != null)
             {
+                if (inStock < basketProduct.Count)
+                {
+                    return "Недостаточно товара на складе, в наличии: " + inStock + " шт.";
+                }
                 basketProduct.Count = count;
                 await _repositoryManager.BasketProductRepository.UpdateBasketProduct(basketProduct);
                 await _repositoryManager.SaveAsync();
+                return "";
             }
+            return "Внутренняя ошибка";
         }
     }
 }
