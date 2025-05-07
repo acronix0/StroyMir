@@ -32,7 +32,7 @@ namespace SimpleShop.Service.Services
                 int inStock = -1;
                 var product = await _repositoryManager.ProductRepository.GetProduct(productArticle);
                 if (product == null)
-                    return "Продукт с указанной статьей не найден.";
+                    return "Товар с указанным артиклем не найден.";
 
                 inStock = product.Count;
 
@@ -108,7 +108,7 @@ namespace SimpleShop.Service.Services
 
             if (basketProduct == null)
             {
-                if (inStock < basketProduct.Count)
+                if (inStock < count)
                 {
                     return "Недостаточно товара на складе, в наличии: " + inStock + " шт.";
                 }
@@ -123,7 +123,7 @@ namespace SimpleShop.Service.Services
             }
             if (basketProduct != null)
             {
-                if (inStock < basketProduct.Count)
+                if (inStock < count)
                 {
                     return "Недостаточно товара на складе, в наличии: " + inStock + " шт.";
                 }
@@ -133,6 +133,40 @@ namespace SimpleShop.Service.Services
                 return "";
             }
             return "Внутренняя ошибка";
+        }
+
+        public async Task<string> SetDeliveryType(ApplicationUser user, string type)
+        {
+            var basket = await GetBasket(user);
+            try
+            {
+                basket.DeliveryType = type;
+                await _repositoryManager.BasketRepository.UpdateBasket(basket);
+                await _repositoryManager.SaveAsync();
+                return "";
+            }
+            catch (Exception)
+            {
+                return "Внутренняя ошибка";
+            }
+            
+        }
+
+        public async Task<string> SetComment(ApplicationUser user, string comment)
+        {
+            var basket = await GetBasket(user);
+            try
+            {
+                basket.Comment = comment;
+                await _repositoryManager.BasketRepository.UpdateBasket(basket);
+                await _repositoryManager.SaveAsync();
+                return "";
+            }
+            catch (Exception)
+            {
+                return "Внутренняя ошибка";
+            }
+
         }
     }
 }

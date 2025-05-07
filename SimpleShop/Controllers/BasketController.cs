@@ -266,5 +266,34 @@ namespace SimpleShop.WebApi.Controllers
             }
         }
 
+        [HttpPost("set-delivery-type")]
+        [Authorize]
+        public async Task<IActionResult> SetDeliveryType([FromBody] string deliveryType)
+        {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            if (user == null)
+                return Unauthorized();
+
+            var err = await _basketManager.SetDeliveryType(user, deliveryType);
+            if (!string.IsNullOrEmpty(err))
+                return BadRequest(err);
+
+            return Ok();
+        }
+
+        [HttpPost("set-delivery-type")]
+        [Authorize]
+        public async Task<IActionResult> SetComment([FromBody] string comment)
+        {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            if (user == null)
+                return Unauthorized();
+
+            var err = await _basketManager.SetComment(user, comment);
+            if (!string.IsNullOrEmpty(err))
+                return BadRequest(err);
+
+            return Ok();
+        }
     }
 }

@@ -14,6 +14,8 @@ namespace SimpleShop.Service.Interfaces
         Task<string> AddProductToBasket(ApplicationUser user, string productArticle, int count);
         Task RemoveProductFromBasket(ApplicationUser user, string productArticle);
         Task<string> ChangeProductCount(ApplicationUser user, string productArticle, int count);
+        Task<string> SetComment(ApplicationUser user, string comment);
+        Task<string> SetDeliveryType(ApplicationUser user, string type);
 
     }
 }
