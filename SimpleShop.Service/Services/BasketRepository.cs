@@ -37,6 +37,7 @@ namespace SimpleShop.Service.Services
                     if (basket != null)
                     {
                         await DeleteBasket(basket);
+                        basket = null;
                     }
                 }catch {}
             }
@@ -47,8 +48,9 @@ namespace SimpleShop.Service.Services
                 return basket;
             }
                
-            basket = new Basket() { BasketProducts = new List<BasketProduct>(), User = user };
+            basket = new Basket() { BasketProducts = new List<BasketProduct>(), User = user, Address = "", Comment = "", DeliveryType = "Доставка-по-адресу", RecipientEmail = user.UserName, RecipientName = user.DisplayName, RecipientPhone = user.PhoneNumber };
             var x = await CreateAsync(basket);
+            await RepositoryContext.SaveChangesAsync();
             return x.Entity; 
         }
 

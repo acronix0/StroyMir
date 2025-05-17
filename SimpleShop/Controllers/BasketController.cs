@@ -81,7 +81,7 @@ namespace SimpleShop.WebApi.Controllers
                 }
                 return Ok(result);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return BadRequest("Ошибка получения корзины");
             }
@@ -281,7 +281,7 @@ namespace SimpleShop.WebApi.Controllers
             return Ok();
         }
 
-        [HttpPost("set-delivery-type")]
+        [HttpPost("set-comment")]
         [Authorize]
         public async Task<IActionResult> SetComment([FromBody] string comment)
         {
